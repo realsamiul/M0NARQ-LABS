@@ -1,18 +1,18 @@
 /*
 ══════════════════════════════════════════════════════════════════
 M0NARQ AI - PREMIUM ANIMATION SYSTEM
-Based on Exo Ape patterns + performance optimizations
-Butter-smooth 60fps scrolling with Lenis
-FIXED VERSION - Preloader timeout + error handling
+BULLETPROOF VERSION - Preloader completely removed via JS
 ══════════════════════════════════════════════════════════════════
 */
 
 class M0NARQ_Animations {
   constructor() {
+    // ✅ BULLETPROOF: Remove loader immediately before anything else
+    this.killLoader();
+
     // Validate dependencies
     if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') {
       console.error('CRITICAL: GSAP or Lenis failed to load from CDN');
-      this.emergencyShowPage();
       return;
     }
 
@@ -26,11 +26,13 @@ class M0NARQ_Animations {
     // Init in correct order
     this.initGSAP();
     this.initLenis();
-    this.initLoader();
     this.initMenu();
     this.initScrollAnimations();
     this.initHoverEffects();
     this.detectPage();
+    
+    // Start animations immediately
+    this.animatePageEntry();
     
     // Performance: RAF-based throttled resize
     let ticking = false;
@@ -48,33 +50,21 @@ class M0NARQ_Animations {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // EMERGENCY FALLBACK IF SCRIPTS FAIL
+  // BULLETPROOF LOADER REMOVAL
   // ═══════════════════════════════════════════════════════════════
-  emergencyShowPage() {
-    const loader = document.querySelector('.loader');
-    const body = document.body;
-    const html = document.documentElement;
+  killLoader() {
+    const loaders = document.querySelectorAll('.loader, [data-loader]');
+    loaders.forEach(loader => {
+      loader.remove(); // Instant removal from DOM
+    });
     
-    if (loader) loader.style.display = 'none';
-    html.style.overflow = '';
-    body.style.overflow = '';
-    body.style.opacity = '1';
-    body.style.visibility = 'visible';
+    // Ensure body is visible
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    document.body.style.opacity = '1';
+    document.body.style.visibility = 'visible';
     
-    console.warn('Emergency mode: Page shown without animations');
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // TIMEOUT WRAPPER FOR PROMISES
-  // ═══════════════════════════════════════════════════════════════
-  timeoutPromise(promise, timeout = 5000, name = 'Promise') {
-    return Promise.race([
-      promise,
-      new Promise((resolve) => setTimeout(() => {
-        console.warn(`⏱️ ${name} timeout after ${timeout}ms - continuing anyway`);
-        resolve();
-      }, timeout))
-    ]);
+    console.log('✅ Loader nuked from DOM');
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -97,7 +87,7 @@ class M0NARQ_Animations {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 2. LENIS SMOOTH SCROLL - ✅ OPTIMIZED
+  // 2. LENIS SMOOTH SCROLL
   // ═══════════════════════════════════════════════════════════════
   initLenis() {
     this.lenis = new Lenis({
@@ -110,9 +100,6 @@ class M0NARQ_Animations {
       touchMultiplier: 2,
     });
 
-    // ✅ Start stopped until page loads
-    this.lenis.stop();
-
     // Sync with GSAP
     this.lenis.on('scroll', ScrollTrigger.update);
 
@@ -122,76 +109,11 @@ class M0NARQ_Animations {
     };
     
     requestAnimationFrame(lenisRAF);
-    console.log('✅ Lenis smooth scroll initialized (stopped until load)');
+    console.log('✅ Lenis smooth scroll initialized');
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 3. LOADER - ✅ FIXED WITH TIMEOUT FALLBACKS
-  // ═══════════════════════════════════════════════════════════════
-    // ═══════════════════════════════════════════════════════════════
-  // 3. LOADER - ✅ BYPASSED (Instant page load)
-  // ═══════════════════════════════════════════════════════════════
-  initLoader() {
-    console.log('⚠️ Loader bypassed - showing page immediately');
-    
-    // Hide loader if it exists
-    const loader = document.querySelector('.loader');
-    if (loader) {
-      loader.style.display = 'none';
-    }
-    
-    // Show page immediately
-    this.showPage();
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // 4. SHOW PAGE - ✅ SMOOTH REVEAL
-  // ═══════════════════════════════════════════════════════════════
-  showPage() {
-    const body = document.body;
-    const html = document.documentElement;
-
-    console.log('📄 Revealing page content...');
-
-    // ✅ Enable scrolling
-    html.style.overflow = '';
-    body.style.overflow = '';
-
-    // ✅ Reveal body (in case inline CSS hid it)
-    gsap.to(body, {
-      opacity: 1,
-      visibility: 'visible',
-      duration: 0.4,
-      ease: "power1.out",
-      onComplete: () => {
-        console.log('🚀 Starting smooth scroll');
-        
-        // Start Lenis smooth scroll
-        if (this.lenis) {
-          this.lenis.start();
-        }
-        
-        // Trigger page entry animations
-        this.animatePageEntry();
-        
-        // Performance: Set will-change only during animation
-        gsap.set('[data-animate], .project-card, .title-line', {
-          willChange: 'transform'
-        });
-        
-        // Clear will-change after animations complete
-        setTimeout(() => {
-          gsap.set('[data-animate], .project-card, .title-line', {
-            clearProps: 'willChange'
-          });
-          console.log('🧹 Cleared will-change for performance');
-        }, 2000);
-      }
-    });
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // 5. PAGE ENTRY - ✅ EXO APE PATTERN
+  // 3. PAGE ENTRY - ✅ EXO APE PATTERN
   // ═══════════════════════════════════════════════════════════════
   animatePageEntry() {
     const heroTitle = document.querySelector('.hero-title, .project-title-main');
@@ -253,10 +175,23 @@ class M0NARQ_Animations {
       
       console.log(`✨ Fading in ${heroMeta.length} metadata elements`);
     }
+
+    // Performance: Set will-change only during animation
+    gsap.set('[data-animate], .project-card, .title-line', {
+      willChange: 'transform'
+    });
+    
+    // Clear will-change after animations complete
+    setTimeout(() => {
+      gsap.set('[data-animate], .project-card, .title-line', {
+        clearProps: 'willChange'
+      });
+      console.log('🧹 Cleared will-change for performance');
+    }, 2000);
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 6. MENU - ✅ CIRCULAR REVEAL (EXO APE)
+  // 4. MENU - ✅ CIRCULAR REVEAL (EXO APE)
   // ═══════════════════════════════════════════════════════════════
   initMenu() {
     const menuButton = document.querySelector('.menu-button');
@@ -347,7 +282,7 @@ class M0NARQ_Animations {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 7. SCROLL ANIMATIONS - ✅ ALL EXO APE PATTERNS
+  // 5. SCROLL ANIMATIONS - ✅ ALL EXO APE PATTERNS
   // ═══════════════════════════════════════════════════════════════
   initScrollAnimations() {
     
@@ -465,7 +400,7 @@ class M0NARQ_Animations {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 8. HOVER EFFECTS - ✅ FIXED VIDEO ERROR HANDLING
+  // 6. HOVER EFFECTS
   // ═══════════════════════════════════════════════════════════════
   initHoverEffects() {
     
@@ -529,7 +464,7 @@ class M0NARQ_Animations {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 9. PAGE-SPECIFIC ANIMATIONS
+  // 7. PAGE-SPECIFIC ANIMATIONS
   // ═══════════════════════════════════════════════════════════════
   detectPage() {
     const body = document.body;
@@ -575,7 +510,7 @@ class M0NARQ_Animations {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 10. UTILITIES
+  // 8. UTILITIES
   // ═══════════════════════════════════════════════════════════════
   refresh() {
     ScrollTrigger.refresh();
@@ -590,7 +525,7 @@ class M0NARQ_Animations {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// INITIALIZE - ✅ SAFE LOADING
+// INITIALIZE - ✅ BULLETPROOF
 // ═══════════════════════════════════════════════════════════════
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
