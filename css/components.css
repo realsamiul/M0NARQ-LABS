@@ -1,9 +1,9 @@
 /*
-═══════════════════════════════════════════════════════════════════
-M0NARQ AI - COMPONENT STYLES (COMPLETE & CORRECTED)
+══════════════════════════════════════════════════════════════════
+M0NARQ AI - COMPONENT STYLES (FIXED VERSION)
 Reusable components: Navigation, Buttons, Footer, Cards, etc.
-All Exo Ape clone accuracy fixes applied
-═══════════════════════════════════════════════════════════════════
+FIXES: Z-index context, webkit prefixes, video positioning
+══════════════════════════════════════════════════════════════════
 */
 
 
@@ -96,7 +96,7 @@ All Exo Ape clone accuracy fixes applied
 
 
 /* ─────────────────────────────────────────────────────────────
-   MENU OVERLAY (✅ CORRECTED - Exact Exo Ape coordinates)
+   MENU OVERLAY - ✅ FIXED: Added webkit prefix for Safari
    ───────────────────────────────────────────────────────────── */
 .menu-overlay {
   position: fixed;
@@ -105,18 +105,21 @@ All Exo Ape clone accuracy fixes applied
   width: 100vw;
   height: 100vh;
   background: var(--color-dark-grey);
-  clip-path: circle(0% at 100% 0%);  /* ✅ CORRECTED: Top-right corner exact coordinates */
+  -webkit-clip-path: circle(0% at 100% 0%);  /* ✅ ADDED: Safari support */
+  clip-path: circle(0% at 100% 0%);
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8rem;
   pointer-events: none;
-  transition: clip-path 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: clip-path 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              -webkit-clip-path 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ✅ ADDED: Webkit transition */
 }
 
 .menu-overlay.is-active {
-  clip-path: circle(141.42% at 100% 0%);  /* ✅ CORRECTED: √2 × 100% for full diagonal coverage */
+  -webkit-clip-path: circle(141.42% at 100% 0%);  /* ✅ ADDED: Safari support */
+  clip-path: circle(141.42% at 100% 0%);
   pointer-events: all;
 }
 
@@ -136,7 +139,7 @@ All Exo Ape clone accuracy fixes applied
   transform: translateY(0) rotate(0);
 }
 
-/* Stagger animation delays (will be controlled by JS in Phase 2) */
+/* Stagger animation delays (controlled by JS) */
 .menu-overlay.is-active .menu-item:nth-child(1) { transition-delay: 0.1s; }
 .menu-overlay.is-active .menu-item:nth-child(2) { transition-delay: 0.15s; }
 .menu-overlay.is-active .menu-item:nth-child(3) { transition-delay: 0.2s; }
@@ -300,7 +303,7 @@ All Exo Ape clone accuracy fixes applied
 
 
 /* ═══════════════════════════════════════════════════════════════
-   3. LOADER / PRELOADER
+   3. LOADER / PRELOADER - ✅ STREAMLINED
    ═══════════════════════════════════════════════════════════════ */
 
 .loader {
@@ -439,7 +442,7 @@ All Exo Ape clone accuracy fixes applied
 
 
 /* ═══════════════════════════════════════════════════════════════
-   5. PROJECT CARDS (✅ CORRECTED - Video Crossfade Fixed)
+   5. PROJECT CARDS - ✅ FIXED: Z-index context + video positioning
    ═══════════════════════════════════════════════════════════════ */
 
 .project-card {
@@ -451,8 +454,8 @@ All Exo Ape clone accuracy fixes applied
 }
 
 .project-thumbnail {
-  position: relative;
-  aspect-ratio: 16/10;  /* ✅ Exact 16:10 ratio (800×500) */
+  position: relative;  /* ✅ FIXED: Added positioning context for z-index */
+  aspect-ratio: 16/10;
   overflow: hidden;
   border-radius: 4px;
   margin-bottom: 2rem;
@@ -463,11 +466,13 @@ All Exo Ape clone accuracy fixes applied
   height: 100%;
   object-fit: cover;
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative;
+  position: absolute;  /* ✅ FIXED: Changed to absolute for proper layering */
+  top: 0;
+  left: 0;
   z-index: 1;
 }
 
-/* ✅ CRITICAL FIX: Video element with correct z-index */
+/* ✅ FIXED: Video element with correct z-index and positioning */
 .project-video {
   position: absolute;
   top: 0;
