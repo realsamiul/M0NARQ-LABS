@@ -19,13 +19,15 @@ class M0NARQ_Animations {
     // Init in correct order
     this.initGSAP();
     this.initLenis();
+
+    // RequestIdleCallback for scroll animations
+    requestIdleCallback ? requestIdleCallback(() => this.initScrollAnimations())
+                        : setTimeout(() => this.initScrollAnimations(), 1);
+
     this.initMenu();
-    this.initScrollAnimations(); // Now batched
-    this.initHoverEffects();
-    this.detectPage();
-    
-    // ✅ Lazy load videos
-    this.lazyVideos();
+    this.initVideoIO(); // NEW: Intersection Observer video autoplay
+    this.animatePageEntry();
+    this.handleResize();
     
     // Start animations immediately
     this.animatePageEntry();
@@ -34,16 +36,7 @@ class M0NARQ_Animations {
     this.initHeaderBlend();
     
     // Performance: RAF-based throttled resize
-    let ticking = false;
-    window.addEventListener('resize', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          ScrollTrigger.refresh();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
+    this.handleResize();
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -100,36 +93,57 @@ class M0NARQ_Animations {
     };
     
     requestAnimationFrame(lenisRAF);
+    
+    // NEW: Disables hover effects while scrolling
+    let scrollTO;
+    this.lenis.on('scroll', ({velocity}) => {
+      document.documentElement.classList.add('is-scrolling');
+      clearTimeout(scrollTO);
+      scrollTO = setTimeout(() =>
+        document.documentElement.classList.remove('is-scrolling'), 120);
+    });
+    
     console.log('✅ Lenis (0.7s duration)');
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // ✅ LAZY VIDEO LOADING (New)
+  // ✅ INTERSECTION OBSERVER VIDEO AUTOPLAY (New)
   // ═══════════════════════════════════════════════════════════════
-  lazyVideos() {
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const vid = entry.target;
-            if (!vid.dataset._hydrated) {
-              vid.load();
-              vid.dataset._hydrated = '1';
-              console.log('📹 Video loaded:', vid.src);
-            }
-            observer.unobserve(vid);
-          }
-        });
-      },
-      { rootMargin: '200px' }
-    );
+  initVideoIO() {
+    const vids = document.querySelectorAll('.project-video');
 
-    document.querySelectorAll('.project-video').forEach(v => {
-      v.setAttribute('preload', 'none'); // Force lazy
-      observer.observe(v);
+    /* 1. preload metadata slightly before viewport */
+    const preloader = new IntersectionObserver((es,obs) => {
+      es.forEach(e=>{
+        if(e.isIntersecting){
+          const v=e.target;
+          v.preload='metadata';
+          v.load();
+          obs.unobserve(v);
+        }
+      });
+    },{rootMargin:'300px'});
+
+    /* 2. play / pause when 60 % visible */
+    const player = new IntersectionObserver(es=>{
+      es.forEach(e=>{
+        const v=e.target;
+        if(e.intersectionRatio>=0.6){
+          v.play().catch(()=>{});
+        } else {
+          v.pause();
+        }
+      });
+    },{threshold:[0,.6]});
+
+    vids.forEach(v=>{
+      v.preload='none';
+      v.muted=true; v.playsInline=true;     // safety
+      preloader.observe(v);
+      player.observe(v);
     });
 
-    console.log('✅ Lazy video observer active');
+    console.log('✅ Video IO observer active');
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -305,7 +319,7 @@ class M0NARQ_Animations {
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 5. SCROLL ANIMATIONS (✅ BATCHED)
+  // 5. SCROLL ANIMATIONS (✅ BATCHED + ENHANCED)
   // ═══════════════════════════════════════════════════════════════
   initScrollAnimations() {
     
@@ -372,18 +386,32 @@ class M0NARQ_Animations {
       }
     });
 
-    // ✅ PARALLAX (kept individual - needs scrub)
+    // ✅ IMAGE-BLOOM EFFECT (NEW)
+    ScrollTrigger.batch('[data-bloom]',{
+      start:'top 95%',
+      end:'bottom 5%',
+      scrub:1,
+      onToggle: self => self.isActive && self.trigger.style.setProperty('--in-view',1),
+      onUpdate: self => {
+        const p = self.progress;                   // 0-1 in viewport
+        self.trigger.style.filter =
+          `brightness(${1+0.4*p}) saturate(${1+0.3*p})`;
+      },
+      onLeave: self => self.trigger.style.filter='brightness(1) saturate(1)'
+    });
+
+    // ✅ ENHANCED PARALLAX (stronger)
     gsap.utils.toArray('[data-parallax]').forEach(el => {
-      const speed = parseFloat(el.dataset.speed) || 0.5;
+      const speed = parseFloat(el.dataset.parallax || el.dataset.speed || 0.6);
 
       gsap.to(el, {
-        y: () => -(el.offsetHeight * speed * 0.2),
+        y: () => -(window.innerHeight * speed),
         ease: "none",
         scrollTrigger: {
           trigger: el,
           start: "top bottom",
           end: "bottom top",
-          scrub: 1.5
+          scrub: true
         }
       });
     });
@@ -417,59 +445,21 @@ class M0NARQ_Animations {
         }
       );
     }
+
+    // Performance optimizations
+    ScrollTrigger.addEventListener('refreshInit', () =>
+      gsap.set('[data-bloom],[data-parallax]',{willChange:'transform'}));
+    ScrollTrigger.addEventListener('refresh', () =>
+      gsap.set('[data-bloom],[data-parallax]',{clearProps:'will-change'}));
     
-    console.log('✅ Scroll animations (batched)');
+    console.log('✅ Scroll animations (batched + enhanced)');
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 6. HOVER EFFECTS (✅ NO EAGER VIDEO LOAD)
+  // 6. HOVER EFFECTS (REMOVED VIDEO HOVER - NOW USING IO)
   // ═══════════════════════════════════════════════════════════════
   initHoverEffects() {
-    
-    document.querySelectorAll('.project-card').forEach(card => {
-      const image = card.querySelector('.project-image');
-      const video = card.querySelector('.project-video');
-
-      if (!video) return;
-
-      // ✅ Removed video.load() - now handled by lazyVideos()
-
-      card.addEventListener('mouseenter', () => {
-        gsap.to(card, { scale: 1.02, duration: 0.4, ease: "power2.out" });
-        
-        const tl = gsap.timeline();
-        tl.to(image, { autoAlpha: 0, duration: 0.3 }, 0)
-          .to(video, {
-            autoAlpha: 1,
-            duration: 0.3,
-            onStart: () => {
-              const playPromise = video.play();
-              if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                  console.warn('Video autoplay blocked:', error.message);
-                });
-              }
-            }
-          }, 0);
-      });
-
-      card.addEventListener('mouseleave', () => {
-        gsap.to(card, { scale: 1, duration: 0.4, ease: "power2.out" });
-        
-        const tl = gsap.timeline();
-        tl.to(video, {
-          autoAlpha: 0,
-          duration: 0.2,
-          onComplete: () => {
-            video.pause();
-            video.currentTime = 0;
-          }
-        }, 0)
-        .to(image, { autoAlpha: 1, duration: 0.2 }, 0);
-      });
-    });
-
-    // ✅ BUTTONS
+    // ✅ BUTTONS ONLY (video hover removed in favor of IO)
     document.querySelectorAll('.button').forEach(btn => {
       const arrow = btn.querySelector('.arrow');
       btn.addEventListener('mouseenter', () => {
@@ -480,7 +470,7 @@ class M0NARQ_Animations {
       });
     });
     
-    console.log('✅ Hover effects (lazy video load)');
+    console.log('✅ Hover effects (buttons only)');
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -519,6 +509,22 @@ class M0NARQ_Animations {
   initStudioPage() {}
   initStoryPage() {}
   initProjectPage() {}
+
+  // ═══════════════════════════════════════════════════════════════
+  // RESIZE HANDLING
+  // ═══════════════════════════════════════════════════════════════
+  handleResize() {
+    let ticking = false;
+    window.addEventListener('resize', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          ScrollTrigger.refresh();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
 
   refresh() {
     ScrollTrigger.refresh();
