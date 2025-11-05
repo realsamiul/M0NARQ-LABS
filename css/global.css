@@ -1,9 +1,9 @@
 /*
-═══════════════════════════════════════════════════════════════════
+══════════════════════════════════════════════════════════════════
 M0NARQ AI - GLOBAL STYLES (COMPLETE, OPTIMIZED & CORRECTED)
 Based on Exo Ape patterns + Responsive clamp() typography
-Version: Production 1.1
-═══════════════════════════════════════════════════════════════════
+Version: Production 1.2 (FIXED)
+══════════════════════════════════════════════════════════════════
 */
 
 /* ═══════════════════════════════════════════════════════════════
@@ -35,7 +35,8 @@ Version: Production 1.1
      LETTER SPACING
      ───────────────────────────────────────────────────────────── */
   --font-ls-headline: -0.02em;
-  --font-ls-uppercase: 0.05em;
+  --letter-spacing-uppercase: 0.05em;
+  --font-ls-uppercase: 0.05em;  /* ✅ Kept for backwards compatibility */
   --font-ls-normal: 0;
 
   /* ─────────────────────────────────────────────────────────────
@@ -159,12 +160,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ✅ Performance hints */
-.page-wrapper,
-.page-content,
-[data-animate] {
-  will-change: transform, opacity;
-}
+/* ✅ REMOVED: Permanent will-change (now handled by JS during animation only) */
 
 img {
   max-width: 100%;
@@ -379,7 +375,7 @@ p {
 .button,
 .label {
   text-transform: uppercase;
-  letter-spacing: var(--font-ls-uppercase);
+  letter-spacing: var(--letter-spacing-uppercase);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -511,8 +507,7 @@ p {
 .h-full { height: 100%; }
 .h-screen { height: 100vh; }
 
-.will-change-transform { will-change: transform; }
-.will-change-opacity { will-change: opacity; }
+/* ✅ REMOVED: will-change utilities (now handled by JS) */
 
 .z-0 { z-index: 0; }
 .z-10 { z-index: 10; }
