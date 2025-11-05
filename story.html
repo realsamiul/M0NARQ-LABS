@@ -4,6 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="The M0NARQ story: From Sylhet floods to production AI systems across Bangladesh.">
+
+        <style>
+        /* Hide everything until animations initialize */
+        html { 
+            overflow: hidden; 
+        }
+        
+        body {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        /* Show loader immediately */
+        .loader {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #0d0e13 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-direction: column !important;
+            z-index: 99999 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        
+        /* Performance hint for animations */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+    
     <title>Story - M0NARQ AI</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
