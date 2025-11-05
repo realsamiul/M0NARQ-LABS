@@ -1,3 +1,5 @@
+[file name]: studio.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,8 +35,11 @@
     
     <title>Studio - M0NARQ AI</title>
     
+    <!-- ✅ Preload critical fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="assets/fonts/SweetSansPro-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
     
     <style>
@@ -124,12 +129,14 @@
 
             <main>
                 
+                <!-- Hero Section -->
                 <section class="page-hero" data-scroll-section>
                     <div class="hero-background" data-parallax data-speed="0.5">
                         <div class="image-wrapper">
                             <img src="assets/images/studio-hero-sentinel.webp" 
                                  alt="Render of Sentinel-1 satellite in orbit"
                                  loading="eager"
+                                 fetchpriority="high"
                                  width="1920"
                                  height="900">
                         </div>
@@ -150,6 +157,7 @@
                     </div>
                 </section>
 
+                <!-- Services Section -->
                 <section class="capabilities-section section" data-scroll-section>
                     <div class="container">
                         
@@ -160,10 +168,148 @@
                                     <img src="assets/images/services-1.webp" 
                                          alt="Abstract topographic lines"
                                          loading="lazy"
+                                         fetchpriority="low"
                                          width="400"
                                          height="500">
                                 </div>
                                 <div class="capability-content">
                                     <h3 class="capability-title">Foundation Models</h3>
                                     <p class="capability-description">
-                                        Vision Transformers — SegFormer-B2 • Swin-v2-Base • DINO-v2 (semantic segmentation). Pre-trained on ImageNet-22k, fine
+                                        Vision Transformers — SegFormer-B2 • Swin-v2-Base • DINO-v2 (semantic segmentation). Pre-trained on ImageNet-22k, fine-tuned on 6-band multispectral + SAR composites. Physics layers enforce energy conservation (SegFormer + LSTM-based flow models).
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="capability-card" data-animate="fade-up">
+                                <div class="capability-image-wrapper">
+                                    <img src="assets/images/services-2.webp" 
+                                         alt="Network nodes and connections"
+                                         loading="lazy"
+                                         fetchpriority="low"
+                                         width="400"
+                                         height="500">
+                                </div>
+                                <div class="capability-content">
+                                    <h3 class="capability-title">Federated Training</h3>
+                                    <p class="capability-description">
+                                        On-device model updates (TensorFlow Lite, ONNX Runtime) encrypted via Paillier homomorphic schemes. Aggregates gradient contributions from 50+ edge nodes without centralising sensitive data. Deployed on Raspberry Pi 4B, Jetson Nano (4 GB), commodity Android (8 GB RAM).
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="capability-card" data-animate="fade-up">
+                                <div class="capability-image-wrapper">
+                                    <img src="assets/images/services-3.webp" 
+                                         alt="Edge computing devices"
+                                         loading="lazy"
+                                         fetchpriority="low"
+                                         width="400"
+                                         height="500">
+                                </div>
+                                <div class="capability-content">
+                                    <h3 class="capability-title">Edge Inference</h3>
+                                    <p class="capability-description">
+                                        &lt;120 ms latency (P95) for 512×512 SAR segmentation on Pi 4B. Quantised INT8 models (post-training, QAT). Fallback to cloud (AWS Lambda GPU) when edge compute saturates. Offline-first: stores 7 days of predictions locally, syncs when bandwidth available.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quote Section -->
+                <section class="quote-section section" data-scroll-section>
+                    <div class="container">
+                        <div class="quote-content" data-animate="fade-up">
+                            <blockquote class="quote">
+                                <p class="quote-text">
+                                    "We don't chase SOTA benchmarks. We ship systems that run on $35 hardware, 
+                                    tolerate 2G networks, and improve every deployment without touching production."
+                                </p>
+                            </blockquote>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA Section -->
+                <section class="cta-section section" data-scroll-section>
+                    <div class="container">
+                        <div class="cta-content" data-animate="fade-up">
+                            <h2 class="cta-title" data-animate="title-split">
+                                <span class="title-mask">
+                                    <span class="title-line">Send us your</span>
+                                </span>
+                                <span class="title-mask">
+                                    <span class="title-line">hardest data problem.</span>
+                                </span>
+                            </h2>
+                            <p class="cta-text">
+                                Prototype in 30 days. Production in 90.
+                            </p>
+                            <a href="contact.html" class="button button-accent">
+                                <span>Book a 20-min teardown</span>
+                                <svg class="arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-content">
+                        
+                        <div class="footer-column">
+                            <h3>M0NARQ AI</h3>
+                            <p>Real-time intelligence for emerging markets. Physics-informed neural networks that ship, not slide decks.</p>
+                        </div>
+
+                        <div class="footer-column">
+                            <h3>Navigate</h3>
+                            <ul class="footer-links">
+                                <li><a href="index.html" class="footer-link">Home</a></li>
+                                <li><a href="work.html" class="footer-link">Work</a></li>
+                                <li><a href="studio.html" class="footer-link">Studio</a></li>
+                                <li><a href="story.html" class="footer-link">Story</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="footer-column">
+                            <h3>Contact</h3>
+                            <ul class="footer-links">
+                                <li><a href="mailto:hello@m0narq.ai" class="footer-link">hello@m0narq.ai</a></li>
+                                <li><a href="contact.html" class="footer-link">Get in touch</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="footer-column">
+                            <h3>Follow</h3>
+                            <div class="footer-social">
+                                <a href="#" class="social-link" aria-label="LinkedIn">LinkedIn</a>
+                                <a href="#" class="social-link" aria-label="Twitter">Twitter</a>
+                                <a href="#" class="social-link" aria-label="GitHub">GitHub</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="footer-bottom">
+                        <p>&copy; 2025 M0NARQ AI. All rights reserved.</p>
+                        <p>Dhaka, Bangladesh</p>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+    <script src="js/animations.js" defer></script>
+
+</body>
+</html>
+[file content end]
