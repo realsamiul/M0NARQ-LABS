@@ -125,7 +125,7 @@
             <main>
 
                 <!-- ── HERO (UNCHANGED) ─────────────────────────────────── -->
-                <section id="hero" class="full-bleed">
+                <section id="hero" class="full-bleed" data-nav-section data-nav-title="Home">
                   <h1>When minutes decide outcomes, physics meets pixels.</h1>
                   <p class="sub">
                      We turn raw data—satellites, shop-floor sensors, paper archives—
@@ -137,7 +137,7 @@
                 </section>
 
                 <!-- ── PROBLEM WE SOLVE ────────────────────────────────── -->
-                <section id="problem-space">
+                <section id="problem-space" data-nav-section data-nav-title="Problem">
                   <h2>The 72-hour Blind Spot</h2>
                   <p>
                     • <strong>Disaster Response&nbsp;▸</strong> Flood maps arrive after the
@@ -157,7 +157,7 @@
                 </section>
 
                 <!-- ── SNAPSHOT OF WHAT'S LIVE ─────────────────────────── -->
-                <section id="demo-snapshot">
+                <section id="demo-snapshot" data-nav-section data-nav-title="Engines">
                   <h2>Four Engines Already Shipping Answers</h2>
 
                   <article class="mini-case">
@@ -196,8 +196,8 @@
                 </section>
 
                 <!-- ── VISION TRACK ─────────────────────────────────────── -->
-                <section id="vision-track">
-                  <h2>Where We’re Going Next</h2>
+                <section id="vision-track" data-nav-section data-nav-title="Vision">
+                  <h2>Where We're Going Next</h2>
                   <ol>
                     <li><strong>Real-time ingest</strong> of commercial SAR + Himawari-8
                         infrared to cut flood latency to <em>3 minutes</em>.</li>
@@ -206,12 +206,12 @@
                     <li><strong>Parametric insurance triggers</strong> for floods &
                         crop-yield: shared-revenue model with reinsurers.</li>
                     <li><strong>Cross-engine causal reasoner</strong> to answer
-                        “If we spray now, how many dengue cases can we avoid?”.</li>
+                        "If we spray now, how many dengue cases can we avoid?".</li>
                   </ol>
                 </section>
 
                 <!-- ── TIMELINE BAND ────────────────────────────────────── -->
-                <section id="timeline">
+                <section id="timeline" data-nav-section data-nav-title="Timeline">
                   <h2>Built Fast, on Pocket Change</h2>
                   <div class="timeline-row">
                     <div class="dot">FEB 2024</div><p>Borrowed laptop ⇢ first flood model, 91 % mIoU.</p>
@@ -228,7 +228,7 @@
                 </section>
 
                 <!-- ── EXISTING STATS BELT (UNCHANGED) ─────────────────── -->
-                <section id="stats-belt" class="stats-section section bg-dark text-white" data-scroll-section>
+                <section id="stats-belt" class="stats-section section bg-dark text-white" data-scroll-section data-nav-section data-nav-title="Stats">
                     <div class="container">
                         <ul class="stats" data-stagger-children>
                             <li data-animate="fade-up">
@@ -252,7 +252,7 @@
                 </section>
 
                 <!-- ── SOCIAL PROOF ─────────────────────────────────────── -->
-                <section id="logos">
+                <section id="logos" data-nav-section data-nav-title="Proof">
                   <h2>Used by Teams Inside</h2>
                   <ul class="logo-bar">
                     <li><img src="/assets/img/logos/dghs.svg" alt="Bangladesh DGHS"></li>
@@ -262,7 +262,7 @@
                 </section>
 
                 <!-- ── CTA (UNCHANGED) ──────────────────────────────────── -->
-                <section id="cta" class="cta-section section" data-scroll-section>
+                <section id="cta" class="cta-section section" data-scroll-section data-nav-section data-nav-title="Contact">
                     <div class="container">
                         <div class="cta-content" data-animate="fade-up">
                             <p class="cta-text">
@@ -327,6 +327,47 @@
 
         </div>
     </div>
+
+    <!-- Dynamic Island Navigation -->
+    <nav class="nav-container">
+        <div class="dynamic-island" id="dynamicIsland">
+            <button class="nav-arrow prev" id="prevBtn" aria-label="Previous section">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor"/>
+                </svg>
+            </button>
+
+            <div class="island-text">
+                <span class="text-content">LOADING</span>
+            </div>
+
+            <button class="nav-arrow next" id="nextBtn" aria-label="Next section">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18L15 12L9 6" stroke="currentColor"/>
+                </svg>
+            </button>
+
+            <div class="progress-indicator">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <button class="menu-button" id="menuButton" aria-label="Open menu">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="menu-panel" id="menuPanel">
+                <a href="index.html" class="menu-item">Home</a>
+                <a href="work.html" class="menu-item">Work</a>
+                <a href="studio.html" class="menu-item">Studio</a>
+                <a href="story.html" class="menu-item">Story</a>
+                <a href="contact.html" class="menu-item">Contact</a>
+            </div>
+        </button>
+    </nav>
 
     <script src="js/animations.js" defer></script>
 
