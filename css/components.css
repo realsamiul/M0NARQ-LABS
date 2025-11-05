@@ -665,3 +665,29 @@ FIXES: Z-index context, webkit prefixes, video positioning
   background: var(--color-white);
   color: var(--color-dark-grey);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ✅ PERFORMANCE OPTIMIZATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Conditional mix-blend-mode (only active at hero) */
+.header {
+  mix-blend-mode: normal;
+  transition: mix-blend-mode 0.3s ease;
+}
+
+body.is-at-hero .header {
+  mix-blend-mode: difference;
+}
+
+/* Content visibility for sections below fold */
+.section:not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1000px;
+}
+
+/* Ensure lazy videos don't flash */
+.project-video {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
