@@ -128,89 +128,20 @@ class M0NARQ_Animations {
   // ═══════════════════════════════════════════════════════════════
   // 3. LOADER - ✅ FIXED WITH TIMEOUT FALLBACKS
   // ═══════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════
+  // 3. LOADER - ✅ BYPASSED (Instant page load)
+  // ═══════════════════════════════════════════════════════════════
   initLoader() {
+    console.log('⚠️ Loader bypassed - showing page immediately');
+    
+    // Hide loader if it exists
     const loader = document.querySelector('.loader');
-    const loaderCircle = document.querySelector('.loader-circle');
-
-    if (!loader) {
-      console.log('⚠️ No loader element found - showing page immediately');
-      this.showPage();
-      return;
+    if (loader) {
+      loader.style.display = 'none';
     }
-
-    console.log('🔄 Initializing loader...');
-
-    // ✅ Animate loader circle
-    if (loaderCircle) {
-      gsap.to(loaderCircle, {
-        rotation: 360,
-        duration: 1,
-        ease: "linear",
-        repeat: -1
-      });
-    }
-
-    // ✅ Wait for DOM + assets with timeout
-    const assetsLoaded = new Promise((resolve) => {
-      if (document.readyState === 'complete') {
-        console.log('✅ Document already complete');
-        resolve();
-      } else {
-        const onLoad = () => {
-          console.log('✅ Window load event fired');
-          resolve();
-        };
-        window.addEventListener('load', onLoad, { once: true });
-        
-        // Fallback: 10 second absolute max
-        setTimeout(() => {
-          console.warn('⏱️ Asset loading timeout (10s) - forcing load');
-          window.removeEventListener('load', onLoad);
-          resolve();
-        }, 10000);
-      }
-    });
-
-    // ✅ Fonts with 3 second timeout + error handling
-    const fontsLoaded = this.timeoutPromise(
-      document.fonts.ready.catch((err) => {
-        console.warn('⚠️ Font loading error:', err);
-        return Promise.resolve();
-      }),
-      3000,
-      'Font loading'
-    );
-
-    // ✅ Wait for both, then hide loader
-    Promise.all([assetsLoaded, fontsLoaded])
-      .then(() => {
-        console.log('✅ All assets loaded');
-        // Minimum display time for smooth UX (800ms)
-        return new Promise(resolve => setTimeout(resolve, 800));
-      })
-      .then(() => {
-        console.log('🎬 Hiding loader...');
-        
-        const tl = gsap.timeline({
-          onComplete: () => {
-            loader.style.display = 'none';
-            this.showPage();
-            console.log('✅ Page visible - animations active');
-          }
-        });
-
-        tl.to(loader, {
-          autoAlpha: 0,
-          duration: 0.6,
-          ease: "power2.out"
-        });
-      })
-      .catch((error) => {
-        console.error('❌ Loader error:', error);
-        // Emergency fallback
-        loader.style.display = 'none';
-        this.showPage();
-      });
+    
+    // Show page immediately
+    this.showPage();
   }
 
   // ═══════════════════════════════════════════════════════════════
