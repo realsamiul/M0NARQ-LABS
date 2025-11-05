@@ -33,8 +33,11 @@
     
     <title>Story - M0NARQ AI</title>
     
+    <!-- ✅ Preload critical fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="assets/fonts/SweetSansPro-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
     
     <style>
@@ -130,6 +133,7 @@
                              alt="SAR flood map overlay"
                              class="chapter-bg-image"
                              loading="eager"
+                             fetchpriority="high"
                              width="1920"
                              height="1080">
                     </div>
@@ -150,6 +154,7 @@
                              alt="Digital elevation model with simulated water flow arrows"
                              class="chapter-bg-image"
                              loading="lazy"
+                             fetchpriority="low"
                              width="1920"
                              height="1080">
                     </div>
@@ -170,6 +175,7 @@
                              alt="Satellite image grid highlighting Bangladesh tile"
                              class="chapter-bg-image"
                              loading="lazy"
+                             fetchpriority="low"
                              width="1920"
                              height="1080">
                     </div>
@@ -190,6 +196,7 @@
                              alt="Collage showing federated edge devices"
                              class="chapter-bg-image"
                              loading="lazy"
+                             fetchpriority="low"
                              width="1920"
                              height="1080">
                     </div>
@@ -210,6 +217,7 @@
                              alt="Emergency responders viewing flood polygons on tablet"
                              class="chapter-bg-image"
                              loading="lazy"
+                             fetchpriority="low"
                              width="1920"
                              height="1080">
                     </div>
@@ -244,8 +252,7 @@
                         </div>
                     </div>
                 </section>
-
-            </main>
+                            </main>
 
             <footer class="footer">
                 <div class="container">
@@ -293,9 +300,13 @@
             </footer>
 
         </div>
+        <!-- /.page-content -->
     </div>
+    <!-- /.page-wrapper -->
 
     <script src="js/animations.js" defer></script>
 
 </body>
 </html>
+
+        
