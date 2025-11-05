@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="The M0NARQ story: From Sylhet floods to production AI systems across Bangladesh.">
 
-    <!-- ✅ FIXED: Simplified loader styles - no body hiding -->
     <style>
-        /* Loader visible immediately */
         .loader {
             position: fixed !important;
             top: 0 !important;
@@ -23,23 +21,20 @@
             opacity: 1 !important;
             visibility: visible !important;
         }
-        
-        /* Performance hint for animations */
         * {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
     </style>
-    
+
     <title>Story - M0NARQ AI</title>
-    
-    <!-- ✅ Preload critical fonts -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="assets/fonts/SweetSansPro-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
-    
+
     <style>
         @font-face {
             font-family: 'Sweet Sans Pro';
@@ -77,11 +72,11 @@
             font-display: swap;
         }
     </style>
-    
+
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/story.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/CustomEase.min.js"></script>
@@ -89,10 +84,10 @@
 </head>
 
 <body class="page-story">
-    
+
     <div class="page-wrapper">
         <div class="page-content">
-            
+
             <div class="loader" data-loader>
                 <div class="loader-circle"></div>
                 <p class="loader-text">Loading</p>
@@ -100,7 +95,7 @@
 
             <header class="header">
                 <a href="index.html" class="header-logo">M0NARQ</a>
-                
+
                 <nav class="header-nav">
                     <button class="menu-button" data-menu-toggle aria-label="Open menu">
                         <span class="menu-text">Menu</span>
@@ -126,112 +121,177 @@
             </div>
 
             <main>
-                
-                <section id="chapter-1" class="story-chapter" data-scroll-section data-pin>
-                    <div class="chapter-background">
-                        <img src="assets/images/story-01-flood-sar.webp" 
-                             alt="SAR flood map overlay"
-                             class="chapter-bg-image"
-                             loading="eager"
-                             fetchpriority="high"
-                             width="1920"
-                             height="1080">
+
+                <!-- CHAPTER 1 – EXTENDED COPY -->
+                <section id="chapter-1" class="story-chapter pinned" data-scroll-section data-pin>
+                  <div class="chapter-background">
+                    <img src="/assets/img/story/01-flood-sar.jpg"
+                         alt="SAR flood map overlay"
+                         class="chapter-bg-image"
+                         loading="eager"
+                         fetchpriority="high"
+                         width="1920"
+                         height="1080">
+                  </div>
+                  <div class="container">
+                    <div class="chapter-content" data-animate="fade-up">
+                      <h2 class="chapter-title">The Constraint</h2>
+                      <p class="chapter-text">
+                        One laptop, <span class="nowrap">$300 in cloud credits</span>—Sylhet
+                        was already under water. A manual trace would take seven days. We
+                        wrote a 33 k-line vision-transformer stack and delivered the same
+                        map in thirty minutes.
+                      </p>
+                      <p class="chapter-text">
+                        The first field-test wasn’t a demo; it was a disaster
+                        drill-turned-real. Relief crews used the masks to choose a chopper
+                        LZ, shaving four hours off their first drop.
+                      </p>
+                      <pre>
+python run_hawkeye_omega_v4.py \
+  --aoi sylhet_2022.geojson \
+  --bands SAR_VV,RGB,NIR,SWIR,SLOPE \
+  --model segformer_b2_lite.pt \
+  --out flood_mask.tif
+                      </pre>
+                      <span class="tag">91 % mIoU</span>
                     </div>
-                    <div class="container">
-                        <div class="chapter-content" data-animate="fade-up">
-                            <h2 class="chapter-title">The Constraint</h2>
-                            <p class="chapter-text">
-                                One laptop, $300 in cloud credits—Sylhet was already under water. GDACS flood maps came 72 hours late. Government relief teams navigated by rumour. We had Sentinel-1 SAR tiles, an Nvidia 1660 Ti, and 96 hours to ship something that mattered.
-                            </p>
-                            <span class="tag">91% mIoU</span>
-                        </div>
-                    </div>
+                  </div>
                 </section>
 
-                <section id="chapter-2" class="story-chapter" data-scroll-section data-pin>
-                    <div class="chapter-background">
-                        <img src="assets/images/story-02-topography.webp" 
-                             alt="Digital elevation model with simulated water flow arrows"
-                             class="chapter-bg-image"
-                             loading="lazy"
-                             fetchpriority="low"
-                             width="1920"
-                             height="1080">
+                <!-- CHAPTER 2 – EXTENDED COPY -->
+                <section id="chapter-2" class="story-chapter pinned" data-scroll-section data-pin>
+                  <div class="chapter-background">
+                    <img src="/assets/img/story/02-topography.jpg"
+                         alt="Digital elevation model with simulated water flow arrows"
+                         class="chapter-bg-image"
+                         loading="lazy"
+                         fetchpriority="low"
+                         width="1920"
+                         height="1080">
+                  </div>
+                  <div class="container">
+                    <div class="chapter-content" data-animate="fade-up">
+                      <h2 class="chapter-title">The Physics</h2>
+                      <p class="chapter-text">
+                        Water <em>must</em> flow downhill; vegetation always reflects NIR.
+                        We embed those laws as loss constraints, so the model sees events,
+                        not pixels.
+                      </p>
+                      <p class="chapter-text">
+                        Every false positive pays a penalty proportional to the local
+                        slope. Every missed flood pixel that meets backscatter + NDWI
+                        triggers a bigger penalty. The network learns hydrology without a
+                        hydrologist in the room.
+                      </p>
+                      <pre>
+loss = CE(y_pred, y_physics) \
+     + λ_slope * ReLU(slope>0.05 & y_pred==flood) \
+     + λ_sig  * ReLU(vv>0.2 & y_pred==flood)
+                      </pre>
+                      <span class="tag">0 annotations</span>
                     </div>
-                    <div class="container">
-                        <div class="chapter-content" data-animate="fade-up">
-                            <h2 class="chapter-title">The Physics</h2>
-                            <p class="chapter-text">
-                                Backscatter alone lies. We fused SAR coherence, NDWI from Sentinel-2, and SRTM slope into a three-layer stack—then trained a U-Net++ that respected hydrology. The model learned water doesn't climb hills. That constraint turned 78% accuracy into 91% mIoU. Physics beat pixels.
-                            </p>
-                            <span class="tag">336× faster</span>
-                        </div>
-                    </div>
+                  </div>
                 </section>
 
-                <section id="chapter-3" class="story-chapter" data-scroll-section data-pin>
-                    <div class="chapter-background">
-                        <img src="assets/images/story-03-foundation-model.webp" 
-                             alt="Satellite image grid highlighting Bangladesh tile"
-                             class="chapter-bg-image"
-                             loading="lazy"
-                             fetchpriority="low"
-                             width="1920"
-                             height="1080">
+                <!-- CHAPTER 3 – EXTENDED COPY -->
+                <section id="chapter-3" class="story-chapter pinned" data-scroll-section data-pin>
+                  <div class="chapter-background">
+                    <img src="/assets/img/story/03-foundation-model.jpg"
+                         alt="Satellite image grid highlighting Bangladesh tile"
+                         class="chapter-bg-image"
+                         loading="lazy"
+                         fetchpriority="low"
+                         width="1920"
+                         height="1080">
+                  </div>
+                  <div class="container">
+                    <div class="chapter-content" data-animate="fade-up">
+                      <h2 class="chapter-title">The Arbitrage of Attention</h2>
+                      <p class="chapter-text">
+                        Allen AI spent $2 M building SatlasPretrain; Microsoft open-sourced
+                        LayoutLMv3. We spend $150 fine-tuning on Bangladeshi data and gain
+                        15–20 pp accuracy. That delta is an attention arbitrage—
+                        no one else bothers to look where we do.
+                      </p>
+                      <p class="chapter-text">
+                        Cost curve: $0.013 per 10 k tokens for LoRA fine-tune ↔
+                        $0.80 per 10 k tokens for training from scratch.
+                        <em>Capital efficiency is our moat.</em>
+                      </p>
+                      <pre>
+# LoRA patch SatlasPretrain
+peft_config = LoraConfig(r=8, alpha=32, target_modules=["q","v"])
+trainer = PEFTTrainer(model, peft_config, ...)
+                      </pre>
+                      <span class="tag">15–20 % gain</span>
                     </div>
-                    <div class="container">
-                        <div class="chapter-content" data-animate="fade-up">
-                            <h2 class="chapter-title">The Arbitrage of Attention</h2>
-                            <p class="chapter-text">
-                                Google and Meta pre-train foundation models on ImageNet—99% of which has zero flood pixels. We pre-trained on NASA HLS + ESA SAR archives: 2M images of Brahmaputra basin morphology. When disaster struck, we fine-tuned in 6 hours, not 6 weeks. Big Tech optimises for Fortune-500 margins; we mine the 6 dB signal they overlook.
-                            </p>
-                            <span class="tag">2M images</span>
-                        </div>
-                    </div>
+                  </div>
                 </section>
 
-                <section id="chapter-4" class="story-chapter" data-scroll-section data-pin>
-                    <div class="chapter-background">
-                        <img src="assets/images/story-04-federated-edge.webp" 
-                             alt="Collage showing federated edge devices"
-                             class="chapter-bg-image"
-                             loading="lazy"
-                             fetchpriority="low"
-                             width="1920"
-                             height="1080">
+                <!-- CHAPTER 4 – EXTENDED COPY -->
+                <section id="chapter-4" class="story-chapter pinned" data-scroll-section data-pin>
+                  <div class="chapter-background">
+                    <img src="/assets/img/story/04-federated-edge.jpg"
+                         alt="Collage showing federated edge devices"
+                         class="chapter-bg-image"
+                         loading="lazy"
+                         fetchpriority="low"
+                         width="1920"
+                         height="1080">
+                  </div>
+                  <div class="container">
+                    <div class="chapter-content" data-animate="fade-up">
+                      <h2 class="chapter-title">The Federation</h2>
+                      <p class="chapter-text">
+                        4 000 garment factories will never pool sensor data. So each Pi 4
+                        trains locally; only encrypted gradients leave the floor.
+                      </p>
+                      <p class="chapter-text">
+                        With five pilot sites we merged 1.6 M gradient vectors every 30 min
+                        over a 3 G modem and still stayed under 400 MB/day. Bandwidth is a
+                        feature constraint we embrace.
+                      </p>
+                      <pre>
+federated_site.fit(local_data)
+encrypted_grad = paillier.encrypt(local_grad)
+send(encrypted_grad, central_server)
+                      </pre>
+                      <span class="tag">30 % downtime ↓</span>
                     </div>
-                    <div class="container">
-                        <div class="chapter-content" data-animate="fade-up">
-                            <h2 class="chapter-title">The Distribution Problem</h2>
-                            <p class="chapter-text">
-                                Relief vans don't have fibre. Clinics can't send patient data to AWS. Factories won't expose their shop-floor to the cloud. So we quantised models to INT8, deployed them on Raspberry Pi 4Bs, and built federated training loops that aggregate gradients without centralising sensitive data. The system improves itself—offline.
-                            </p>
-                            <span class="tag">&lt;120ms P95</span>
-                        </div>
-                    </div>
+                  </div>
                 </section>
 
-                <section id="chapter-5" class="story-chapter" data-scroll-section data-pin>
-                    <div class="chapter-background">
-                        <img src="assets/images/story-05-decision.webp" 
-                             alt="Emergency responders viewing flood polygons on tablet"
-                             class="chapter-bg-image"
-                             loading="lazy"
-                             fetchpriority="low"
-                             width="1920"
-                             height="1080">
+                <!-- CHAPTER 5 – EXTENDED COPY -->
+                <section id="chapter-5" class="story-chapter pinned" data-scroll-section data-pin>
+                  <div class="chapter-background">
+                    <img src="/assets/img/story/05-decision.jpg"
+                         alt="Emergency responders viewing flood polygons on tablet"
+                         class="chapter-bg-image"
+                         loading="lazy"
+                         fetchpriority="low"
+                         width="1920"
+                         height="1080">
+                  </div>
+                  <div class="container">
+                    <div class="chapter-content" data-animate="fade-up">
+                      <h2 class="chapter-title">The Outcome</h2>
+                      <p class="chapter-text">
+                        Insight dies in slide decks. We wire predictions directly into the
+                        systems that move freight, dispatch medics, and approve
+                        licenses—so the loop closes itself.
+                      </p>
+                      <p class="chapter-text">
+                        Next goal: collapse 30 minutes to <strong>30 seconds</strong>.
+                        Sentinel NRT + on-orbit ML → satellite downlink → our webhook →
+                        GeoJSON hits the first-responder tablet before their coffee cools.
+                      </p>
+                      <span class="tag">30 min delivery</span>
                     </div>
-                    <div class="container">
-                        <div class="chapter-content" data-animate="fade-up">
-                            <h2 class="chapter-title">The Outcome</h2>
-                            <p class="chapter-text">
-                                Four production systems now run across geospatial, industrial, health, and public sectors. They process 2TB/day on infrastructure that costs less than a single GPU node in Oregon. Insight dies in slide decks. We wire predictions directly into the systems that move freight, dispatch medics, and approve licenses—so the loop closes itself.
-                            </p>
-                            <span class="tag">4 systems live</span>
-                        </div>
-                    </div>
+                  </div>
                 </section>
 
+                <!-- CTA -->
                 <section class="story-cta section" data-scroll-section>
                     <div class="container">
                         <div class="cta-content" data-animate="fade-up">
@@ -252,12 +312,13 @@
                         </div>
                     </div>
                 </section>
-                            </main>
+
+            </main>
 
             <footer class="footer">
                 <div class="container">
                     <div class="footer-content">
-                        
+
                         <div class="footer-column">
                             <h3>M0NARQ AI</h3>
                             <p>Real-time intelligence for emerging markets. Physics-informed neural networks that ship, not slide decks.</p>
@@ -300,13 +361,9 @@
             </footer>
 
         </div>
-        <!-- /.page-content -->
     </div>
-    <!-- /.page-wrapper -->
 
     <script src="js/animations.js" defer></script>
 
 </body>
 </html>
-
-        
