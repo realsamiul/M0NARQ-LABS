@@ -1,0 +1,405 @@
+/*
+═══════════════════════════════════════════════════════════════════
+M0NARQ AI - PROJECT PAGE STYLES
+Shared styles for all 4 project detail pages
+Location: css/project.css
+Used by: work/*.html (geospatial, rmg, healthcare, gov)
+═══════════════════════════════════════════════════════════════════
+*/
+
+
+/* ═══════════════════════════════════════════════════════════════
+   1. PROJECT HERO SECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+.project-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-dark-grey);
+}
+
+.hero-video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+}
+
+.project-hero .hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+}
+
+.project-title-main {
+  font-family: var(--font-headline);
+  font-size: var(--font-s-h1);
+  line-height: var(--font-lh-h1);
+  letter-spacing: var(--font-ls-h1);
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+  color: var(--color-white);
+}
+
+.project-subtitle {
+  font-size: 2rem;
+  line-height: 1.6;
+  color: var(--color-white-08);
+  font-weight: var(--font-weight-regular);
+}
+
+@media (max-width: 768px) {
+  .project-hero {
+    min-height: 80vh;
+    padding: 10rem 0 6rem;
+  }
+
+  .project-hero .hero-content {
+    padding: 0 2rem;
+  }
+
+  .project-subtitle {
+    font-size: 1.6rem;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   2. PROJECT INFO GRID
+   ═══════════════════════════════════════════════════════════════ */
+
+.project-info-section {
+  padding: var(--spacing-lg) 0;
+  background: var(--color-off-white);
+  border-bottom: 1px solid var(--color-dark-grey-02);
+}
+
+.project-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4rem;
+}
+
+.project-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.info-label {
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-uppercase);
+  color: var(--color-dark-grey-06);
+  font-weight: var(--font-weight-medium);
+}
+
+.info-value {
+  font-size: 1.8rem;
+  color: var(--color-dark-grey);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.4;
+}
+
+@media (max-width: 1024px) {
+  .project-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .project-info-grid {
+    grid-template-columns: 1fr;
+    gap: 2.4rem;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   3. CONTENT SECTIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+.project-overview,
+.project-solution {
+  padding: var(--spacing-xl) 0;
+  background: var(--color-off-white);
+}
+
+.content-narrow {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.content-narrow .section-title {
+  font-family: var(--font-headline);
+  font-size: var(--font-s-h2);
+  line-height: var(--font-lh-h2);
+  letter-spacing: var(--font-ls-h2);
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+.content-narrow .text-large {
+  font-size: 2rem;
+  line-height: 1.8;
+  color: var(--color-dark-grey);
+}
+
+@media (max-width: 768px) {
+  .content-narrow .text-large {
+    font-size: 1.8rem;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   4. CHALLENGE SECTION (Split Layout)
+   ═══════════════════════════════════════════════════════════════ */
+
+.project-challenge {
+  padding: var(--spacing-xl) 0;
+  background: var(--color-white);
+}
+
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.split-content .section-title {
+  font-family: var(--font-headline);
+  font-size: var(--font-s-h2);
+  line-height: var(--font-lh-h2);
+  letter-spacing: var(--font-ls-h2);
+  text-transform: uppercase;
+  margin-bottom: 2.4rem;
+}
+
+.split-content p {
+  font-size: 1.8rem;
+  line-height: 1.8;
+  color: var(--color-dark-grey);
+}
+
+.split-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.split-media img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.split-media:hover img {
+  transform: scale(1.05);
+}
+
+@media (max-width: 1024px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+
+  .split-content p {
+    font-size: 1.6rem;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   5. RESULTS/IMPACT SECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+.project-results {
+  padding: var(--spacing-xl) 0;
+  background: var(--color-dark-grey);
+  color: var(--color-white);
+}
+
+.project-results .section-title {
+  font-family: var(--font-headline);
+  font-size: var(--font-s-h2);
+  line-height: var(--font-lh-h2);
+  letter-spacing: var(--font-ls-h2);
+  text-transform: uppercase;
+  margin-bottom: 6rem;
+  text-align: center;
+}
+
+.project-results .stats {
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.project-results .stat-value {
+  color: var(--color-accent);
+}
+
+.project-results .stat-label {
+  color: var(--color-white-06);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   6. NEXT PROJECT SECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+.next-project {
+  padding: var(--spacing-xl) 0;
+  background: var(--color-off-white);
+}
+
+.next-project-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 6rem 4rem;
+  background: var(--color-white);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border: 2px solid transparent;
+}
+
+.next-project-link:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-accent);
+}
+
+.next-label {
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-uppercase);
+  color: var(--color-dark-grey-06);
+  font-weight: var(--font-weight-medium);
+}
+
+.next-title {
+  font-family: var(--font-headline);
+  font-size: 4rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-dark-grey);
+  text-align: center;
+  transition: color 0.4s ease;
+}
+
+.next-project-link:hover .next-title {
+  color: var(--color-accent);
+}
+
+@media (max-width: 768px) {
+  .next-project-link {
+    padding: 4rem 2rem;
+  }
+
+  .next-title {
+    font-size: 2.4rem;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   7. ADDITIONAL UTILITY SECTIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Image grids for project galleries (if needed) */
+.project-gallery {
+  padding: var(--spacing-xl) 0;
+  background: var(--color-off-white);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4rem;
+}
+
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  aspect-ratio: 16/10;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+
+/* Pull quotes for testimonials or key statements */
+.pull-quote {
+  max-width: 800px;
+  margin: var(--spacing-lg) auto;
+  padding: 4rem;
+  text-align: center;
+  background: var(--color-white);
+  border-left: 4px solid var(--color-accent);
+}
+
+.pull-quote p {
+  font-size: 2.4rem;
+  line-height: 1.6;
+  color: var(--color-dark-grey);
+  font-style: italic;
+  font-weight: var(--font-weight-light);
+}
+
+.pull-quote cite {
+  display: block;
+  margin-top: 2rem;
+  font-size: 1.6rem;
+  color: var(--color-dark-grey-06);
+  font-style: normal;
+}
+
+@media (max-width: 768px) {
+  .pull-quote {
+    padding: 3rem 2rem;
+  }
+
+  .pull-quote p {
+    font-size: 1.8rem;
+  }
+}

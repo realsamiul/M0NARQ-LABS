@@ -1,0 +1,790 @@
+/*
+═══════════════════════════════════════════════════════════════════
+M0NARQ AI - GLOBAL STYLES (COMPLETE & CORRECTED)
+Based on Exo Ape patterns with all critical fixes applied
+Version: Production 1.0
+═══════════════════════════════════════════════════════════════════
+*/
+
+/* ═══════════════════════════════════════════════════════════════
+   1. CSS CUSTOM PROPERTIES (Design System)
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─────────────────────────────────────────────────────────────
+     FONT FAMILIES
+     ───────────────────────────────────────────────────────────── */
+  --font-headline: 'Michroma', sans-serif;
+  --font-body: 'Sweet Sans Pro', sans-serif;
+  
+  /* Maintain compatibility with Document 3 variable names */
+  --font-f-lausanne-300: 'Sweet Sans Pro', sans-serif;
+  --font-f-lausanne-400: 'Sweet Sans Pro', sans-serif;
+  --font-f-lausanne-500: 'Sweet Sans Pro', sans-serif;
+
+  /* ─────────────────────────────────────────────────────────────
+     FONT WEIGHTS
+     ───────────────────────────────────────────────────────────── */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 900;
+
+  /* ─────────────────────────────────────────────────────────────
+     LETTER SPACING
+     ───────────────────────────────────────────────────────────── */
+  --letter-spacing-headline: -0.02em;
+  --letter-spacing-uppercase: 0.05em;
+  --letter-spacing-normal: 0;
+
+  /* ─────────────────────────────────────────────────────────────
+     TYPOGRAPHY SIZES - VIEWPORT-BASED (Critical Fix #1)
+     Exact values from 12 JS files - FLUID SCALING
+     ───────────────────────────────────────────────────────────── */
+  --font-s-h0: 25.6vw;
+  --font-lh-h0: 25.6vw;
+  --font-ls-h0: -1.2vw;
+
+  --font-s-h1: 16vw;
+  --font-lh-h1: 16vw;
+  --font-ls-h1: -0.4vw;
+
+  --font-s-h2: 7.7333333333vw;
+  --font-lh-h2: 9.0666666667vw;
+  --font-ls-h2: -0.4vw;
+
+  --font-s-h3: 4.2666666667vw;
+  --font-lh-h3: 4.8vw;
+  --font-ls-h3: -0.1066666667vw;
+
+  /* Body text stays in rem for readability */
+  --font-s-body: 1.6rem;
+  --font-lh-body: 2.4rem;
+
+  /* ─────────────────────────────────────────────────────────────
+     COLOR SYSTEM
+     ───────────────────────────────────────────────────────────── */
+  
+  /* Whites */
+  --color-white: #fff;
+  --color-white-02: hsla(0, 0%, 100%, 0.2);
+  --color-white-04: hsla(0, 0%, 100%, 0.4);
+  --color-white-06: hsla(0, 0%, 100%, 0.6);
+  --color-white-08: hsla(0, 0%, 100%, 0.8);
+
+  /* Off-Whites (Primary background) */
+  --color-off-white: #f8f8f8;
+  --color-off-white-02: hsla(0, 0%, 97%, 0.2);
+  --color-off-white-04: hsla(0, 0%, 97%, 0.4);
+  --color-off-white-06: hsla(0, 0%, 97%, 0.6);
+  --color-off-white-08: hsla(0, 0%, 97%, 0.8);
+
+  /* Dark (Primary text) */
+  --color-story: #070707;
+  --color-dark-grey: #0d0e13;
+  --color-dark-grey-02: rgba(13, 14, 19, 0.2);
+  --color-dark-grey-04: rgba(13, 14, 19, 0.4);
+  --color-dark-grey-06: rgba(13, 14, 19, 0.6);
+  --color-dark-grey-08: rgba(13, 14, 19, 0.8);
+
+  /* Light Greys */
+  --color-light-grey: #e4e0db;
+  --color-light-grey-02: hsla(33, 14%, 88%, 0.2);
+  --color-light-grey-06: hsla(33, 14%, 88%, 0.6);
+  --color-light-grey-08: hsla(33, 14%, 88%, 0.8);
+
+  /* Sand (Warm accents) */
+  --color-sand: #e0ccbb;
+  --color-sand-06: hsla(28, 37%, 81%, 0.6);
+  --color-sand-08: hsla(28, 37%, 81%, 0.8);
+
+  /* M0NARQ Accent (Muted teal for CTAs, links, highlights) */
+  --color-accent: #2c8c99;
+  --color-accent-light: #3da5b4;
+  --color-accent-dark: #1f6b76;
+
+  /* ─────────────────────────────────────────────────────────────
+     SPACING SYSTEM - EXACT EXO APE RATIOS (Critical Fix #3)
+     Multiples of 2.4rem (24px base)
+     ───────────────────────────────────────────────────────────── */
+  --spacing-unit: 2.4rem;    /* 24px */
+  --spacing-xs: 2.4rem;      /* 24px */
+  --spacing-sm: 4.8rem;      /* 48px */
+  --spacing-md: 7.2rem;      /* 72px */
+  --spacing-lg: 9.6rem;      /* 96px */
+  --spacing-xl: 12rem;       /* 120px */
+
+  /* ─────────────────────────────────────────────────────────────
+     TRANSITIONS
+     ───────────────────────────────────────────────────────────── */
+  --transition-fast: 0.2s;
+  --transition-base: 0.3s;
+  --transition-slow: 0.6s;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE OVERRIDES (Typography & Spacing)
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    /* Scaled viewport units for mobile */
+    --font-s-h0: 18vw;
+    --font-lh-h0: 18vw;
+    --font-ls-h0: -0.8vw;
+    
+    --font-s-h1: 12vw;
+    --font-lh-h1: 12vw;
+    --font-ls-h1: -0.3vw;
+    
+    --font-s-h2: 10vw;
+    --font-lh-h2: 12vw;
+    --font-ls-h2: -0.3vw;
+    
+    --font-s-h3: 8vw;
+    --font-lh-h3: 9.6vw;
+    --font-ls-h3: -0.08vw;
+    
+    /* Reduced spacing on mobile */
+    --spacing-xl: 6rem;
+    --spacing-lg: 4.8rem;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   2. BASE RESETS
+   ═══════════════════════════════════════════════════════════════ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%; /* 10px base for rem calculations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-s-body);
+  line-height: var(--font-lh-body);
+  color: var(--color-dark-grey);
+  background-color: var(--color-off-white);
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   3. PAGE WRAPPER STRUCTURE (Critical Fix #2)
+   Required for scroll-triggered animations
+   ═══════════════════════════════════════════════════════════════ */
+
+.page-wrapper {
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.page-content {
+  width: 100%;
+  position: relative;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   4. CONTAINER SYSTEM
+   ═══════════════════════════════════════════════════════════════ */
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 4rem;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   5. SECTION SPACING
+   ═══════════════════════════════════════════════════════════════ */
+
+.section {
+  padding: var(--spacing-xl) 0;
+}
+
+.section-padding-top {
+  padding-top: var(--spacing-xl);
+}
+
+.section-padding-bottom {
+  padding-bottom: var(--spacing-xl);
+}
+
+.has-padding-top-and-bottom {
+  padding-top: var(--spacing-xl);
+  padding-bottom: var(--spacing-xl);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   6. GRID SYSTEMS
+   ═══════════════════════════════════════════════════════════════ */
+
+.grid {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   7. TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   HEADLINES (Michroma) - NOW WITH VIEWPORT UNITS
+   ───────────────────────────────────────────────────────────── */
+h1, h2, .h1, .h2,
+.hero-title,
+.section-title,
+.project-title-main {
+  font-family: var(--font-headline);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-headline);
+}
+
+.h0 {
+  font-family: var(--font-headline);
+  font-size: var(--font-s-h0);
+  line-height: var(--font-lh-h0);
+  letter-spacing: var(--font-ls-h0);
+  text-transform: uppercase;
+}
+
+.h1, h1 {
+  font-size: var(--font-s-h1);
+  line-height: var(--font-lh-h1);
+  letter-spacing: var(--font-ls-h1);
+}
+
+.h2, h2 {
+  font-size: var(--font-s-h2);
+  line-height: var(--font-lh-h2);
+  letter-spacing: var(--font-ls-h2);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SUBHEADINGS (Sweet Sans Pro)
+   ───────────────────────────────────────────────────────────── */
+h3, .h3 {
+  font-family: var(--font-body);
+  font-size: var(--font-s-h3);
+  line-height: var(--font-lh-h3);
+  letter-spacing: var(--font-ls-h3);
+  font-weight: var(--font-weight-medium);
+}
+
+h4, h5, h6 {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TITLE LINE SYSTEM (✅ CORRECTED - Animation-safe)
+   ───────────────────────────────────────────────────────────── */
+.title {
+  font-family: var(--font-headline);
+  text-transform: uppercase;
+}
+
+/* ✅ CRITICAL: Mask wrapper for animation */
+.title-mask {
+  display: block;
+  overflow: hidden; /* Critical - enables mask animations */
+  line-height: 1.1;
+}
+
+.title-line {
+  display: block;
+  overflow: hidden; /* Critical - enables slide-up animations */
+  line-height: 1.1;
+}
+
+.title.is-large {
+  font-size: var(--font-s-h1);
+  line-height: var(--font-lh-h1);
+  letter-spacing: var(--font-ls-h1);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BODY TEXT
+   ───────────────────────────────────────────────────────────── */
+p {
+  font-family: var(--font-body);
+  font-size: var(--font-s-body);
+  line-height: var(--font-lh-body);
+  font-weight: var(--font-weight-regular);
+}
+
+.text-large {
+  font-size: 2rem;
+  line-height: 1.6;
+}
+
+.text-small {
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   UPPERCASE TEXT (Nav, buttons, labels)
+   ───────────────────────────────────────────────────────────── */
+.text-uppercase,
+.nav-link,
+.menu-link,
+.button,
+.label {
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-uppercase);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   8. IMAGE & MEDIA HANDLING
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   IMAGE WRAPPERS (Critical for zoom/scale effects)
+   ───────────────────────────────────────────────────────────── */
+.image-wrapper {
+  position: relative;
+  overflow: hidden; /* Critical - enables zoom/scale effects */
+  width: 100%;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ASPECT RATIO CONTAINERS
+   ───────────────────────────────────────────────────────────── */
+.aspect-16-9 {
+  aspect-ratio: 16/9;
+}
+
+.aspect-16-10 {
+  aspect-ratio: 16/10;
+}
+
+.aspect-4-3 {
+  aspect-ratio: 4/3;
+}
+
+.aspect-3-4 {
+  aspect-ratio: 3/4;
+}
+
+.aspect-square {
+  aspect-ratio: 1/1;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   VIDEO WRAPPERS
+   ───────────────────────────────────────────────────────────── */
+.video-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  background: #000;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Video with aspect ratio */
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+}
+
+.video-container video,
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   9. UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   VISIBILITY
+   ───────────────────────────────────────────────────────────── */
+.hidden {
+  display: none !important;
+}
+
+.invisible {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TEXT ALIGNMENT
+   ───────────────────────────────────────────────────────────── */
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   COLORS
+   ───────────────────────────────────────────────────────────── */
+.bg-dark {
+  background: var(--color-dark-grey);
+}
+
+.bg-light {
+  background: var(--color-off-white);
+}
+
+.bg-white {
+  background: var(--color-white);
+}
+
+.bg-sand {
+  background: var(--color-sand);
+}
+
+.text-white {
+  color: var(--color-white);
+}
+
+.text-dark {
+  color: var(--color-dark-grey);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   OVERFLOW
+   ───────────────────────────────────────────────────────────── */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-visible {
+  overflow: visible;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   POSITION
+   ───────────────────────────────────────────────────────────── */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.sticky {
+  position: sticky;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DISPLAY
+   ───────────────────────────────────────────────────────────── */
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.grid {
+  display: grid;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FLEX UTILITIES
+   ───────────────────────────────────────────────────────────── */
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.align-start {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SPACING UTILITIES
+   ───────────────────────────────────────────────────────────── */
+.m-0 {
+  margin: 0;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.mb-auto {
+  margin-bottom: auto;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   WIDTH & HEIGHT
+   ───────────────────────────────────────────────────────────── */
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ANIMATION UTILITIES (for GSAP)
+   ───────────────────────────────────────────────────────────── */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Z-INDEX
+   ───────────────────────────────────────────────────────────── */
+.z-0 {
+  z-index: 0;
+}
+
+.z-10 {
+  z-index: 10;
+}
+
+.z-20 {
+  z-index: 20;
+}
+
+.z-30 {
+  z-index: 30;
+}
+
+.z-40 {
+  z-index: 40;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE UTILITIES
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .desktop-hidden {
+    display: none !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   10. ACCESSIBILITY
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Reduce motion for users with motion sensitivity */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}

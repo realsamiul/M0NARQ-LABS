@@ -1,0 +1,182 @@
+/*
+═══════════════════════════════════════════════════════════════════
+M0NARQ AI - INDEX/HOMEPAGE STYLES
+Page-specific styles for index.html
+CORRECTED VERSION - All animation conflicts resolved
+═══════════════════════════════════════════════════════════════════
+*/
+
+
+/* ═══════════════════════════════════════════════════════════════
+   1. HERO SECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--color-off-white);
+    padding: 12rem 0 8rem;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.hero-background .image-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.hero-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4rem;
+}
+
+.hero-title {
+    font-family: var(--font-headline);
+    font-size: var(--font-s-h0);
+    line-height: var(--font-lh-h0);
+    letter-spacing: var(--font-ls-h0);
+    text-transform: uppercase;
+    margin-bottom: 4rem;
+    color: var(--color-dark-grey);
+}
+
+.hero-subtitle {
+    font-size: 2rem;
+    line-height: 1.6;
+    color: var(--color-dark-grey-06);
+    max-width: 900px;
+    margin: 0 auto;
+    font-weight: var(--font-weight-regular);
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 10rem 0 6rem;
+    }
+
+    .hero-content {
+        padding: 0 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.6rem;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   2. FEATURED PROJECTS SECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+.featured-projects {
+    padding: var(--spacing-xl) 0;
+    background: var(--color-off-white);
+}
+
+.section-header {
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.section-subtitle {
+    font-size: 1.6rem;
+    line-height: 1.6;
+    color: var(--color-dark-grey-06);
+    max-width: 800px;
+    margin: 0 auto 6rem;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6rem 4rem;
+    margin-top: 6rem;
+}
+
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 6rem;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   3. STATS BELT SECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+.stats-section {
+    padding: var(--spacing-xl) 0;
+    background: var(--color-dark-grey);
+    color: var(--color-white);
+}
+
+.stats-section .container {
+    display: flex;
+    justify-content: center;
+}
+
+.stats-section .stats {
+    justify-content: center;
+    max-width: 1200px;
+}
+
+@media (max-width: 768px) {
+    .stats-section .stats {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   4. CTA SECTION
+   ═══════════════════════════════════════════════════════════════ */
+
+.cta-section {
+    padding: var(--spacing-xl) 0;
+    background: var(--color-off-white);
+}
+
+.cta-content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.cta-text {
+    font-size: 2rem;
+    line-height: 1.6;
+    color: var(--color-dark-grey);
+    margin-bottom: 4rem;
+}
+
+@media (max-width: 768px) {
+    .cta-text {
+        font-size: 1.6rem;
+        margin-bottom: 3rem;
+    }
+}
