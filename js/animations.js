@@ -3,11 +3,19 @@
 M0NARQ AI - PREMIUM ANIMATION SYSTEM
 Based on Exo Ape patterns + performance optimizations
 Butter-smooth 60fps scrolling with Lenis
+FIXED VERSION - Preloader timeout + error handling
 ══════════════════════════════════════════════════════════════════
 */
 
 class M0NARQ_Animations {
   constructor() {
+    // Validate dependencies
+    if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') {
+      console.error('CRITICAL: GSAP or Lenis failed to load from CDN');
+      this.emergencyShowPage();
+      return;
+    }
+
     // Performance: Debounced resize handler
     this.resizeTimeout = null;
     this.windowSize = {
@@ -24,15 +32,49 @@ class M0NARQ_Animations {
     this.initHoverEffects();
     this.detectPage();
     
-    // Performance: Debounced resize
+    // Performance: RAF-based throttled resize
+    let ticking = false;
     window.addEventListener('resize', () => {
-      clearTimeout(this.resizeTimeout);
-      this.resizeTimeout = setTimeout(() => {
-        this.windowSize.width = window.innerWidth;
-        this.windowSize.height = window.innerHeight;
-        ScrollTrigger.refresh();
-      }, 250);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          this.windowSize.width = window.innerWidth;
+          this.windowSize.height = window.innerHeight;
+          ScrollTrigger.refresh();
+          ticking = false;
+        });
+        ticking = true;
+      }
     });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // EMERGENCY FALLBACK IF SCRIPTS FAIL
+  // ═══════════════════════════════════════════════════════════════
+  emergencyShowPage() {
+    const loader = document.querySelector('.loader');
+    const body = document.body;
+    const html = document.documentElement;
+    
+    if (loader) loader.style.display = 'none';
+    html.style.overflow = '';
+    body.style.overflow = '';
+    body.style.opacity = '1';
+    body.style.visibility = 'visible';
+    
+    console.warn('Emergency mode: Page shown without animations');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // TIMEOUT WRAPPER FOR PROMISES
+  // ═══════════════════════════════════════════════════════════════
+  timeoutPromise(promise, timeout = 5000, name = 'Promise') {
+    return Promise.race([
+      promise,
+      new Promise((resolve) => setTimeout(() => {
+        console.warn(`⏱️ ${name} timeout after ${timeout}ms - continuing anyway`);
+        resolve();
+      }, timeout))
+    ]);
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -51,10 +93,7 @@ class M0NARQ_Animations {
       duration: 0.6
     });
 
-    // Performance: Set will-change on elements that will animate
-    gsap.set('[data-animate], .project-card, .title-line', {
-      willChange: 'transform'
-    });
+    console.log('✅ GSAP initialized');
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -67,7 +106,7 @@ class M0NARQ_Animations {
       direction: 'vertical',
       gestureDirection: 'vertical',
       smooth: true,
-      smoothTouch: false, // Disable on touch for better performance
+      smoothTouch: false,
       touchMultiplier: 2,
     });
 
@@ -83,20 +122,23 @@ class M0NARQ_Animations {
     };
     
     requestAnimationFrame(lenisRAF);
+    console.log('✅ Lenis smooth scroll initialized (stopped until load)');
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 3. LOADER - ✅ COMPLETELY REWRITTEN
+  // 3. LOADER - ✅ FIXED WITH TIMEOUT FALLBACKS
   // ═══════════════════════════════════════════════════════════════
   initLoader() {
     const loader = document.querySelector('.loader');
     const loaderCircle = document.querySelector('.loader-circle');
 
     if (!loader) {
-      // No loader, just show page
+      console.log('⚠️ No loader element found - showing page immediately');
       this.showPage();
       return;
     }
+
+    console.log('🔄 Initializing loader...');
 
     // ✅ Animate loader circle
     if (loaderCircle) {
@@ -108,27 +150,52 @@ class M0NARQ_Animations {
       });
     }
 
-    // ✅ Wait for EVERYTHING to load
+    // ✅ Wait for DOM + assets with timeout
     const assetsLoaded = new Promise((resolve) => {
       if (document.readyState === 'complete') {
+        console.log('✅ Document already complete');
         resolve();
       } else {
-        window.addEventListener('load', resolve);
+        const onLoad = () => {
+          console.log('✅ Window load event fired');
+          resolve();
+        };
+        window.addEventListener('load', onLoad, { once: true });
+        
+        // Fallback: 10 second absolute max
+        setTimeout(() => {
+          console.warn('⏱️ Asset loading timeout (10s) - forcing load');
+          window.removeEventListener('load', onLoad);
+          resolve();
+        }, 10000);
       }
     });
 
-    const fontsLoaded = document.fonts.ready;
+    // ✅ Fonts with 3 second timeout + error handling
+    const fontsLoaded = this.timeoutPromise(
+      document.fonts.ready.catch((err) => {
+        console.warn('⚠️ Font loading error:', err);
+        return Promise.resolve();
+      }),
+      3000,
+      'Font loading'
+    );
 
-    Promise.all([assetsLoaded, fontsLoaded]).then(() => {
-      // ✅ Minimum display time for smooth UX
-      const minDisplayTime = new Promise(resolve => setTimeout(resolve, 800));
-      
-      minDisplayTime.then(() => {
-        // Fade out loader
+    // ✅ Wait for both, then hide loader
+    Promise.all([assetsLoaded, fontsLoaded])
+      .then(() => {
+        console.log('✅ All assets loaded');
+        // Minimum display time for smooth UX (800ms)
+        return new Promise(resolve => setTimeout(resolve, 800));
+      })
+      .then(() => {
+        console.log('🎬 Hiding loader...');
+        
         const tl = gsap.timeline({
           onComplete: () => {
             loader.style.display = 'none';
             this.showPage();
+            console.log('✅ Page visible - animations active');
           }
         });
 
@@ -137,8 +204,13 @@ class M0NARQ_Animations {
           duration: 0.6,
           ease: "power2.out"
         });
+      })
+      .catch((error) => {
+        console.error('❌ Loader error:', error);
+        // Emergency fallback
+        loader.style.display = 'none';
+        this.showPage();
       });
-    });
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -148,28 +220,40 @@ class M0NARQ_Animations {
     const body = document.body;
     const html = document.documentElement;
 
+    console.log('📄 Revealing page content...');
+
     // ✅ Enable scrolling
     html.style.overflow = '';
     body.style.overflow = '';
 
-    // ✅ Reveal body with smooth fade
+    // ✅ Reveal body (in case inline CSS hid it)
     gsap.to(body, {
       opacity: 1,
       visibility: 'visible',
       duration: 0.4,
       ease: "power1.out",
       onComplete: () => {
+        console.log('🚀 Starting smooth scroll');
+        
         // Start Lenis smooth scroll
-        this.lenis.start();
+        if (this.lenis) {
+          this.lenis.start();
+        }
         
         // Trigger page entry animations
         this.animatePageEntry();
         
-        // Performance: Clear will-change after animations
+        // Performance: Set will-change only during animation
+        gsap.set('[data-animate], .project-card, .title-line', {
+          willChange: 'transform'
+        });
+        
+        // Clear will-change after animations complete
         setTimeout(() => {
           gsap.set('[data-animate], .project-card, .title-line', {
             clearProps: 'willChange'
           });
+          console.log('🧹 Cleared will-change for performance');
         }, 2000);
       }
     });
@@ -203,6 +287,8 @@ class M0NARQ_Animations {
         ease: "customGentle",
         clearProps: "all"
       }, 0.2);
+      
+      console.log(`✨ Animating ${titleLines.length} title lines`);
     }
 
     // ✅ Hero image zoom
@@ -218,6 +304,8 @@ class M0NARQ_Animations {
         ease: "power2.out",
         clearProps: "scale"
       }, 0);
+      
+      console.log('✨ Hero image zoom animation');
     }
 
     // ✅ Metadata fade
@@ -231,6 +319,8 @@ class M0NARQ_Animations {
         duration: 0.8,
         ease: "power2.out"
       }, 0.6);
+      
+      console.log(`✨ Fading in ${heroMeta.length} metadata elements`);
     }
   }
 
@@ -244,7 +334,10 @@ class M0NARQ_Animations {
     const burgerLines = document.querySelectorAll('.burger-line');
     const menuItems = document.querySelectorAll('.menu-item');
 
-    if (!menuButton || !menuOverlay) return;
+    if (!menuButton || !menuOverlay) {
+      console.warn('⚠️ Menu elements not found');
+      return;
+    }
 
     let isMenuOpen = false;
 
@@ -262,12 +355,14 @@ class M0NARQ_Animations {
         }
       });
     });
+    
+    console.log('✅ Menu initialized');
   }
 
   openMenu(overlay, burger, lines, items) {
-    this.lenis.stop();
+    if (this.lenis) this.lenis.stop();
 
-    // ✅ Circular reveal from top-right (Exo Ape pattern)
+    // ✅ Circular reveal from top-right
     gsap.fromTo(overlay,
       { clipPath: "circle(0% at 100% 0%)" },
       {
@@ -302,7 +397,7 @@ class M0NARQ_Animations {
   }
 
   closeMenu(overlay, burger, lines, items) {
-    this.lenis.start();
+    if (this.lenis) this.lenis.start();
 
     gsap.to(overlay, {
       clipPath: "circle(0% at 100% 0%)",
@@ -386,12 +481,12 @@ class M0NARQ_Animations {
       }
     });
 
-    // ✅ PARALLAX
+    // ✅ PARALLAX (optimized with transform3d)
     gsap.utils.toArray('[data-parallax]').forEach(el => {
       const speed = parseFloat(el.dataset.speed) || 0.5;
 
       gsap.to(el, {
-        yPercent: -20 * speed,
+        y: () => -(el.offsetHeight * speed * 0.2),
         ease: "none",
         scrollTrigger: {
           trigger: el,
@@ -434,19 +529,24 @@ class M0NARQ_Animations {
         }
       );
     }
+    
+    console.log('✅ Scroll animations initialized');
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // 8. HOVER EFFECTS
+  // 8. HOVER EFFECTS - ✅ FIXED VIDEO ERROR HANDLING
   // ═══════════════════════════════════════════════════════════════
   initHoverEffects() {
     
-    // ✅ PROJECT CARDS - Video crossfade
+    // ✅ PROJECT CARDS - Video crossfade with error handling
     document.querySelectorAll('.project-card').forEach(card => {
       const image = card.querySelector('.project-image');
       const video = card.querySelector('.project-video');
 
       if (!video) return;
+
+      // Preload video metadata
+      video.load();
 
       card.addEventListener('mouseenter', () => {
         gsap.to(card, { scale: 1.02, duration: 0.4, ease: "power2.out" });
@@ -456,7 +556,14 @@ class M0NARQ_Animations {
           .to(video, {
             autoAlpha: 1,
             duration: 0.3,
-            onStart: () => video.play().catch(() => {})
+            onStart: () => {
+              const playPromise = video.play();
+              if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                  console.warn('Video autoplay blocked:', error.message);
+                });
+              }
+            }
           }, 0);
       });
 
@@ -486,6 +593,8 @@ class M0NARQ_Animations {
         if (arrow) gsap.to(arrow, { x: 0, duration: 0.3, ease: "power2.out" });
       });
     });
+    
+    console.log('✅ Hover effects initialized');
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -501,10 +610,12 @@ class M0NARQ_Animations {
   }
 
   initHomepage() {
-    // Stats animation
+    // Stats counter animation
     const stats = document.querySelectorAll('.stat-value');
     stats.forEach(stat => {
-      const value = parseFloat(stat.textContent);
+      const text = stat.textContent.trim();
+      const value = parseFloat(text);
+      
       if (!isNaN(value)) {
         gsap.fromTo(stat,
           { textContent: 0 },
@@ -542,17 +653,20 @@ class M0NARQ_Animations {
   destroy() {
     ScrollTrigger.getAll().forEach(st => st.kill());
     gsap.globalTimeline.clear();
-    this.lenis.destroy();
+    if (this.lenis) this.lenis.destroy();
+    console.log('🧹 Animations destroyed');
   }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// INITIALIZE
+// INITIALIZE - ✅ SAFE LOADING
 // ═══════════════════════════════════════════════════════════════
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
+    console.log('🎬 DOM ready - initializing animations');
     window.m0narqAnimations = new M0NARQ_Animations();
   });
 } else {
+  console.log('🎬 DOM already loaded - initializing animations');
   window.m0narqAnimations = new M0NARQ_Animations();
 }
