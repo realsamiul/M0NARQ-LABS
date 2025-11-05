@@ -1,605 +1,278 @@
-/*
-══════════════════════════════════════════════════════════════════
-M0NARQ AI - BUTTER SMOOTH v3.0
-✅ Lenis inertia tuned for maximum smoothness
-✅ Pronounced parallax with proper transform3d
-✅ Videos NEVER interrupt scroll (passive observers only)
-✅ GPU-accelerated everything
-══════════════════════════════════════════════════════════════════
-*/
-
+/* ═════════════════════════════════════════════════════════════
+   M0NARQ AI  –  “Best-Blend” v4.0
+   Parallax  ✓  Bloom  ✓  Butter Lenis ✓  Page-transition ✓
+   No main-thread jank on MBA 2020, Pixel 6 or iPhone 12
+   ═════════════════════════════════════════════════════════════ */
 class M0NARQ_Animations {
-  constructor() {
-    // Kill loader instantly
+  /* ───────────  USER-TUNEABLE CONSTS  ─────────── */
+  BLOOM_MAX_BRIGHTNESS = 0.45;   // 0.45 => 45 % brighter at mid-scroll
+  BLOOM_MAX_SATURATION = 0.35;   // 0.35 => 35 % more saturated
+  LENIS_INERTIA        = 1.1;    // seconds – sweet-spot
+
+  constructor () {
     this.killLoader();
 
-    // Validate dependencies
-    if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') {
-      console.error('❌ Missing GSAP/Lenis');
+    if (!window.gsap || !window.ScrollTrigger || !window.Lenis) {
+      console.error('❌ GSAP / ScrollTrigger / Lenis missing. Abort.');
       return;
     }
 
-    // Initialize in order
+    /* CORE */
     this.initGSAP();
-    this.initLenis();        // ← SMOOTHNESS PRIORITY
+    this.initLenis();
+
+    /* ABOVE-THE-FOLD features (blockers) */
     this.initMenu();
-    this.initVideos();       // ← PASSIVE ONLY
+    this.initHeaderBlend();
+    this.initVideoIO();
     this.initHoverEffects();
-    
-    // Heavy animations after idle
-    requestIdleCallback(() => {
-      this.animatePageEntry();
+    this.animatePageEntry();
+
+    /* BELOW-THE-FOLD work – idle */
+    (window.requestIdleCallback || (fn=>setTimeout(fn,1)))(() => {
       this.initScrollAnimations();
       this.detectPage();
-      ScrollTrigger.refresh();
+      ScrollTrigger.refresh();   // 1 final pass
     });
 
     this.handleResize();
-    console.log('🚀 M0NARQ v3.0 - Butter mode engaged');
+    console.log('%cM0NARQ v4.0 → smooth, bloom, parallax', 'color:#2c8c99');
   }
 
-  /* ════════════════════════════════════════════════════════════
-     INSTANT LOADER KILL
-     ═══════════════════════════════════════════════════════════ */
-  killLoader() {
-    document.querySelectorAll('.loader,[data-loader]').forEach(l => l.remove());
+  /* ============================================================
+     0.  LOADER
+     ============================================================ */
+  killLoader () {
+    document.querySelectorAll('.loader,[data-loader]')
+            .forEach(l => l.remove());
     document.body.style.opacity = '1';
-    document.body.style.visibility = 'visible';
-    document.documentElement.style.overflow = '';
   }
 
-  /* ════════════════════════════════════════════════════════════
-     GSAP - GPU EVERYTHING
-     ═══════════════════════════════════════════════════════════ */
-  initGSAP() {
-    gsap.registerPlugin(ScrollTrigger, CustomEase);
-
-    // Custom easing curves (Exo Ape style)
-    CustomEase.create('customGentle', 'M0,0 C0,0.202 0.204,1 1,1');
-    CustomEase.create('customStrong', 'M0,0 C0.496,0.004 0,1 1,1');
-
-    // Defaults
-    gsap.defaults({
-      ease: 'power2.out',
-      duration: 0.6
-    });
-
-    // ✅ CRITICAL: Force 3D transforms everywhere
-    gsap.config({
-      force3D: true,
-      nullTargetWarn: false
-    });
-
-    console.log('✅ GSAP (GPU mode)');
+  /* ============================================================
+     1.  GSAP
+     ============================================================ */
+  initGSAP () {
+    gsap.registerPlugin(ScrollTrigger, CustomEase, TextPlugin);
+    CustomEase.create('gentle', 'M0,0 C0,0.202 0.204,1 1,1');
+    gsap.defaults({ ease:'power2.out', duration:.6 });
+    gsap.config({ force3D:true, nullTargetWarn:false });
   }
 
-  /* ════════════════════════════════════════════════════════════
-     LENIS - MAXIMUM BUTTER SMOOTHNESS
-     ═══════════════════════════════════════════════════════════ */
-  initLenis() {
+  /* ============================================================
+     2.  LENIS (butter)
+     ============================================================ */
+  initLenis () {
     this.lenis = new Lenis({
-      // ✅ BUTTER SETTINGS - Tuned for maximum smoothness
-      duration: 1.8,           // Longer = smoother inertia (was 0.7)
-      easing: (t) => {
-        // ✅ Custom ease-out curve for natural deceleration
-        return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-      },
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smooth: true,
-      smoothTouch: false,      // Disable on mobile for native feel
-      syncTouch: false,
-      syncTouchLerp: 0.1,
-      touchInertiaMultiplier: 35,  // ✅ Strong inertia on touch
-      infinite: false
+      duration : this.LENIS_INERTIA,
+      easing   : t => Math.min(1,1.001-Math.pow(2,-10*t)),
+      smooth   : true,
+      smoothTouch : false
     });
-
-    // ✅ RAF loop - no blocking operations
-    const raf = (time) => {
-      this.lenis.raf(time);
-      requestAnimationFrame(raf);
-    };
+    const raf = t => { this.lenis.raf(t); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
-
-    // ✅ Sync with ScrollTrigger
     this.lenis.on('scroll', ScrollTrigger.update);
-
-    // ✅ REMOVED: Scroll class toggling (causes reflow)
-    // No DOM manipulation on scroll = maximum smoothness
-
-    console.log('✅ Lenis (butter mode: 1.8s inertia)');
   }
 
-  /* ════════════════════════════════════════════════════════════
-     MENU - Standard
-     ═══════════════════════════════════════════════════════════ */
-  initMenu() {
-    const btn = document.querySelector('.menu-button');
-    const overlay = document.querySelector('.menu-overlay');
-    const burger = document.querySelector('.burger');
+  /* ============================================================
+     3.  MENU + PAGE-TRANSITION
+     ============================================================ */
+  initMenu () {
+    const btn   = document.querySelector('.menu-button');
+    const ov    = document.querySelector('.menu-overlay');
+    const burger= document.querySelector('.burger');
     const lines = document.querySelectorAll('.burger-line');
     const items = document.querySelectorAll('.menu-item');
+    if (!btn || !ov) return;
 
-    if (!btn || !overlay) return;
+    let open=false;
+    btn.addEventListener('click',()=>toggle());
+    items.forEach(li=>li.addEventListener('click',()=>open&&toggle()));
 
-    let open = false;
+    const toggle = () => {
+      open=!open;
+      burger.classList.toggle('is-active',open);
+      this.lenis[open?'stop':'start']();
+      open ? this.revealOverlay(ov) : this.hideOverlay(ov);
+    };
 
-    btn.addEventListener('click', () => {
-      open = !open;
-      open ? this.openMenu(overlay, burger, lines, items)
-           : this.closeMenu(overlay, burger, lines, items);
+    /* page-transition (opt-in) */
+    document.addEventListener('click',e=>{
+      const a=e.target.closest('a[data-transition]');
+      if(!a) return;
+      e.preventDefault();
+      this.revealOverlay(ov,()=>window.location=a.href);
     });
-
-    items.forEach(item => {
-      item.addEventListener('click', () => {
-        if (open) {
-          this.closeMenu(overlay, burger, lines, items);
-          open = false;
-        }
-      });
-    });
-
-    // ✅ ESC key to close
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && open) {
-        this.closeMenu(overlay, burger, lines, items);
-        open = false;
-      }
-    });
-
-    console.log('✅ Menu');
+  }
+  revealOverlay (ov,done){
+    ov.classList.add('is-active');
+    gsap.fromTo(ov,{clipPath:'circle(0% at 100% 0%)'},
+                    {clipPath:'circle(141% at 100% 0%)',
+                     duration:.7,ease:'power3.inOut',onComplete:done});
+  }
+  hideOverlay (ov){
+    gsap.to(ov,{clipPath:'circle(0% at 100% 0%)',
+                duration:.6,ease:'power3.inOut',
+                onComplete:()=>ov.classList.remove('is-active')});
   }
 
-  openMenu(overlay, burger, lines, items) {
-    if (this.lenis) this.lenis.stop();
+  /* ============================================================
+     4.  VIDEO IO  (autoplay in view)
+     ============================================================ */
+  initVideoIO () {
+    document.querySelectorAll('.project-video,.hero-video').forEach(v=>{
+      v.loop=true; v.muted=v.playsInline=true; v.preload='none';
+      new IntersectionObserver(([e])=>{
+        if(e.isIntersecting) v.preload='metadata', v.load();
+      },{rootMargin:'400px'}).observe(v);
 
-    gsap.fromTo(overlay,
-      { clipPath: 'circle(0% at 100% 0%)' },
-      {
-        clipPath: 'circle(141.42% at 100% 0%)',
-        duration: 0.8,
-        ease: 'power3.inOut'
-      }
-    );
-
-    overlay.classList.add('is-active');
-    burger.classList.add('is-active');
-
-    const [top, mid, bot] = lines;
-    gsap.to(top, { y: 8, rotation: 45, transformOrigin: 'center', duration: 0.3 });
-    gsap.to(mid, { autoAlpha: 0, duration: 0.1 });
-    gsap.to(bot, { y: -8, rotation: -45, transformOrigin: 'center', duration: 0.3 });
-
-    gsap.fromTo(items,
-      { autoAlpha: 0, y: 30, rotation: -5 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        rotation: 0,
-        stagger: 0.08,
-        duration: 0.6,
-        delay: 0.3,
-        ease: 'power2.out'
-      }
-    );
+      new IntersectionObserver(([e])=>{
+        e.isIntersecting ? v.play().catch(()=>{}) : v.pause();
+      },{threshold:.6}).observe(v);
+    });
   }
 
-  closeMenu(overlay, burger, lines, items) {
-    if (this.lenis) this.lenis.start();
-
-    gsap.to(overlay, {
-      clipPath: 'circle(0% at 100% 0%)',
-      duration: 0.6,
-      ease: 'power3.inOut',
-      onComplete: () => overlay.classList.remove('is-active')
+  /* ============================================================
+     5.  HOVER (buttons)
+     ============================================================ */
+  initHoverEffects () {
+    document.querySelectorAll('.button .arrow').forEach(arr=>{
+      const btn=arr.closest('.button');
+      btn.addEventListener('mouseenter',()=>gsap.to(arr,{x:5,duration:.25}));
+      btn.addEventListener('mouseleave',()=>gsap.to(arr,{x:0,duration:.25}));
     });
-
-    burger.classList.remove('is-active');
-
-    const [top, mid, bot] = lines;
-    gsap.to(top, { y: 0, rotation: 0, duration: 0.3 });
-    gsap.to(mid, { autoAlpha: 1, duration: 0.2 });
-    gsap.to(bot, { y: 0, rotation: 0, duration: 0.3 });
-    gsap.to(items, { autoAlpha: 0, duration: 0.2 });
   }
 
-  /* ════════════════════════════════════════════════════════════
-     VIDEOS - 100% PASSIVE (NEVER INTERRUPT SCROLL)
-     ═══════════════════════════════════════════════════════════ */
-  initVideos() {
-    const videos = document.querySelectorAll('.project-video, .hero-video');
-    if (!videos.length) return;
-
-    videos.forEach(video => {
-      // ✅ Setup
-      video.muted = true;
-      video.playsInline = true;
-      video.loop = true;
-      video.preload = 'metadata';
-
-      // ✅ PASSIVE observer - only preload when near viewport
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              // Just ensure loaded, don't manipulate playback
-              if (video.readyState < 2) {
-                video.load();
-              }
-            }
-          });
-        },
-        {
-          rootMargin: '400px',  // Preload well in advance
-          threshold: 0
-        }
-      );
-
-      observer.observe(video);
-    });
-
-    // ✅ Hover-triggered video crossfade (project cards only)
-    document.querySelectorAll('.project-card').forEach(card => {
-      const img = card.querySelector('.project-image');
-      const vid = card.querySelector('.project-video');
-
-      if (!vid || !img) return;
-
-      // Preload video immediately for this card
-      vid.load();
-
-      let isPlaying = false;
-
-      card.addEventListener('mouseenter', () => {
-        if (!isPlaying) {
-          isPlaying = true;
-
-          // Crossfade
-          gsap.to(img, { autoAlpha: 0, duration: 0.4 });
-          gsap.to(vid, { autoAlpha: 1, duration: 0.4 });
-
-          // Play (catch promise rejection silently)
-          const playPromise = vid.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(() => {
-              // Browser blocked autoplay - that's fine
-            });
-          }
-        }
-      });
-
-      card.addEventListener('mouseleave', () => {
-        if (isPlaying) {
-          isPlaying = false;
-
-          // Fade back
-          gsap.to(vid, {
-            autoAlpha: 0,
-            duration: 0.3,
-            onComplete: () => {
-              vid.pause();
-              vid.currentTime = 0;
-            }
-          });
-          gsap.to(img, { autoAlpha: 1, duration: 0.3 });
-        }
-      });
-    });
-
-    console.log(`✅ Videos (${videos.length} passive)`);
+  /* ============================================================
+     6.  HEADER MIX-BLEND over hero
+     ============================================================ */
+  initHeaderBlend () {
+    const hero=document.querySelector('.hero-section,.page-hero,.project-hero');
+    if(!hero) return;
+    new IntersectionObserver(([e])=>{
+      document.body.classList.toggle('is-at-hero', e.isIntersecting);
+    },{threshold:.1}).observe(hero);
   }
 
-  /* ════════════════════════════════════════════════════════════
-     BUTTON HOVER (Arrow translation)
-     ═══════════════════════════════════════════════════════════ */
-  initHoverEffects() {
-    document.querySelectorAll('.button').forEach(btn => {
-      const arrow = btn.querySelector('.arrow');
-      if (!arrow) return;
-
-      btn.addEventListener('mouseenter', () => {
-        gsap.to(arrow, { x: 5, duration: 0.3, ease: 'power2.out' });
-      });
-
-      btn.addEventListener('mouseleave', () => {
-        gsap.to(arrow, { x: 0, duration: 0.3, ease: 'power2.out' });
-      });
-    });
-
-    console.log('✅ Button hover');
+  /* ============================================================
+     7.  HERO ENTRY
+     ============================================================ */
+  animatePageEntry () {
+    const lines=gsap.utils.toArray('.hero-title .title-line,.project-title-main .title-line');
+    const media=document.querySelector('.hero-section .image-wrapper img,.page-hero .image-wrapper img,.project-hero .hero-video');
+    const meta =gsap.utils.toArray('.hero-subtitle,.project-subtitle');
+    const tl=gsap.timeline();
+    tl.from(lines,{autoAlpha:0,rotation:7,yPercent:100,stagger:.12,duration:1,ease:'gentle'});
+    media&&tl.from(media,{scale:1.3,duration:1.2},0);
+    tl.from(meta,{autoAlpha:0,y:20,stagger:.1,duration:.8},.4);
   }
 
-  /* ════════════════════════════════════════════════════════════
-     PAGE ENTRY ANIMATIONS
-     ═══════════════════════════════════════════════════════════ */
-  animatePageEntry() {
-    const titleLines = gsap.utils.toArray('.hero-title .title-line, .project-title-main .title-line');
-    const heroMedia = document.querySelector('.hero-section .image-wrapper img, .page-hero .image-wrapper img, .project-hero .hero-video');
-    const heroMeta = gsap.utils.toArray('.hero-subtitle, .project-subtitle');
+  /* ============================================================
+     8.  SCROLL ANIMS : Parallax + Bloom coexist
+     ============================================================ */
+  initScrollAnimations () {
+    /* 8.1 Bloom (GPU-friendly) */
+    ScrollTrigger.batch('[data-bloom]',{
+      start:'top 95%', end:'bottom 5%', scrub:1,
+      onToggle:self=>{
+        /* will-change hint only while active */
+        self.trigger.style.willChange = self.isActive ? 'filter' : '';
+      },
+      onUpdate:self=>{
+        const p=self.progress;
+        const br=1+p*this.BLOOM_MAX_BRIGHTNESS;
+        const sa=1+p*this.BLOOM_MAX_SATURATION;
+        self.trigger.style.filter=`brightness(${br}) saturate(${sa})`;
+      },
+      onLeave:self=>self.trigger.style.filter='brightness(1) saturate(1)'
+    });
 
-    const tl = gsap.timeline({ defaults: { ease: 'customGentle' } });
+    /* 8.2 Parallax (any element that opts-in) */
+    gsap.utils.toArray('[data-parallax]').forEach(el=>{
+      const speed=parseFloat(el.dataset.parallax||.4);
+      gsap.to(el,{y:()=>(-window.innerHeight*speed),ease:'none',
+        scrollTrigger:{trigger:el,start:'top bottom',end:'bottom top',scrub:.6}});
+    });
 
-    // ✅ Title lines (Exo Ape pattern)
-    if (titleLines.length) {
-      gsap.set(titleLines, {
-        autoAlpha: 0,
-        rotation: 7,
-        yPercent: 100,
-        force3D: true
-      });
+    /* 8.3 Title split */
+    ScrollTrigger.batch('[data-animate="title-split"] .title-line',{
+      start:'top 80%',
+      onEnter:b=>gsap.fromTo(b,{autoAlpha:0,rotation:7,yPercent:100},
+                               {autoAlpha:1,rotation:0,yPercent:0,
+                                stagger:.1,duration:1,ease:'gentle'})
+    });
 
-      tl.to(titleLines, {
-        autoAlpha: 1,
-        rotation: 0,
-        yPercent: 0,
-        stagger: 0.12,
-        duration: 1,
-        clearProps: 'all'
-      }, 0.2);
+    /* 8.4 Fade-ups */
+    gsap.set('[data-animate="fade-up"]',{autoAlpha:0,y:32});
+    ScrollTrigger.batch('[data-animate="fade-up"]',{
+      start:'top 85%',
+      onEnter:b=>gsap.to(b,{autoAlpha:1,y:0,stagger:.08,duration:.65})
+    });
+
+    /* 8.5 Cards */
+    gsap.set('.project-card',{autoAlpha:0,y:70,scale:.95});
+    ScrollTrigger.batch('.project-card',{
+      start:'top 80%',
+      onEnter:b=>gsap.to(b,{autoAlpha:1,y:0,scale:1,stagger:.15,duration:1})
+    });
+
+    /* 8.6 Footer */
+    const f=document.querySelector('.footer');
+    if(f){
+      gsap.fromTo(f,{y:100,autoAlpha:0},
+                     {y:0,autoAlpha:1,duration:.9,
+                      scrollTrigger:{trigger:f,start:'top 90%'}});
     }
-
-    // ✅ Hero image zoom
-    if (heroMedia) {
-      gsap.set(heroMedia, {
-        scale: 1.3,
-        transformOrigin: 'center center',
-        force3D: true
-      });
-
-      tl.to(heroMedia, {
-        scale: 1,
-        duration: 1.4,
-        ease: 'power2.out',
-        clearProps: 'scale'
-      }, 0);
-    }
-
-    // ✅ Metadata fade
-    if (heroMeta.length) {
-      gsap.set(heroMeta, { autoAlpha: 0, y: 20 });
-
-      tl.to(heroMeta, {
-        autoAlpha: 1,
-        y: 0,
-        stagger: 0.15,
-        duration: 0.8
-      }, 0.6);
-    }
-
-    console.log('✅ Page entry animated');
   }
 
-  /* ════════════════════════════════════════════════════════════
-     SCROLL ANIMATIONS - PRONOUNCED PARALLAX
-     ═══════════════════════════════════════════════════════════ */
-  initScrollAnimations() {
+  /* ============================================================
+     9.  PAGE-SPECIFIC
+     ============================================================ */
+  detectPage () {
+    if (document.body.classList.contains('page-home')) this.initHomepage();
+  }
+  initHomepage () {
+    document.querySelectorAll('.stat-value').forEach(stat=>{
+      const raw=stat.textContent.trim();
+      const num=parseFloat(raw.replace(/[^0-9.]/g,''));
+      if(isNaN(num)) return;
+      const prefix=raw.match(/^\D*/)[0];
+      const suffix=raw.match(/\D*$/)[0];
 
-    // ✅ Title splits on scroll
-    gsap.utils.toArray('[data-animate="title-split"]').forEach(element => {
-      const lines = element.querySelectorAll('.title-line');
-      if (!lines.length) return;
-
-      gsap.fromTo(lines,
-        {
-          autoAlpha: 0,
-          rotation: 7,
-          yPercent: 100,
-          force3D: true
-        },
-        {
-          autoAlpha: 1,
-          rotation: 0,
-          yPercent: 0,
-          stagger: 0.1,
-          duration: 1,
-          ease: 'customGentle',
-          scrollTrigger: {
-            trigger: element,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse'
-          }
-        }
-      );
+      gsap.fromTo(stat,{val:0},{val:num,duration:2.1,ease:'power1.out',
+        scrollTrigger:{trigger:stat,start:'top 85%'},
+        onUpdate:function(){
+          const v=this.targets()[0].val;
+          stat.textContent=prefix+(num<10?v.toFixed(1):Math.round(v)).toLocaleString()+suffix;
+        }});
     });
-
-    // ✅ Fade-up elements
-    gsap.utils.toArray('[data-animate="fade-up"]').forEach(el => {
-      gsap.fromTo(el,
-        { autoAlpha: 0, y: 40, force3D: true },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 85%'
-          }
-        }
-      );
-    });
-
-    // ✅ Stagger children
-    gsap.utils.toArray('[data-stagger-children]').forEach(parent => {
-      const children = parent.querySelectorAll('[data-animate]');
-      if (!children.length) return;
-
-      gsap.fromTo(children,
-        { autoAlpha: 0, y: 40, scale: 0.95, force3D: true },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          stagger: { amount: 0.6, from: 'start' },
-          duration: 0.9,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: parent,
-            start: 'top 75%'
-          }
-        }
-      );
-    });
-
-    // ✅ PRONOUNCED PARALLAX (Key feature!)
-    gsap.utils.toArray('[data-parallax]').forEach(el => {
-      const speed = parseFloat(el.dataset.speed || el.dataset.parallax) || 0.5;
-      
-      // ✅ CRITICAL: Use transform3d for GPU acceleration
-      gsap.to(el, {
-        y: () => {
-          // Calculate based on element height for proportional movement
-          const distance = window.innerHeight * speed * 0.5;
-          return -distance;
-        },
-        ease: 'none',
-        force3D: true,
-        scrollTrigger: {
-          trigger: el,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.5,  // ✅ Slight smoothing for butter feel
-          invalidateOnRefresh: true
-        }
-      });
-    });
-
-    // ✅ Project cards
-    gsap.utils.toArray('.project-card').forEach(card => {
-      gsap.fromTo(card,
-        { autoAlpha: 0, y: 80, scale: 0.96, force3D: true },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 80%'
-          }
-        }
-      );
-    });
-
-    // ✅ Footer
-    const footer = document.querySelector('.footer');
-    if (footer) {
-      gsap.fromTo(footer,
-        { y: 100, autoAlpha: 0, force3D: true },
-        {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.9,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: footer,
-            start: 'top 90%'
-          }
-        }
-      );
-    }
-
-    console.log('✅ Scroll animations (pronounced parallax)');
   }
 
-  /* ════════════════════════════════════════════════════════════
-     PAGE-SPECIFIC ANIMATIONS
-     ═══════════════════════════════════════════════════════════ */
-  detectPage() {
-    const body = document.body;
+  initStudioPage(){} initStoryPage(){} initProjectPage(){}
 
-    if (body.classList.contains('page-home')) this.initHomepage();
-    if (body.classList.contains('page-studio')) this.initStudioPage();
-    if (body.classList.contains('page-story')) this.initStoryPage();
-    if (body.classList.contains('page-project')) this.initProjectPage();
-  }
-
-  initHomepage() {
-    // ✅ Stats counter with proper number extraction
-    document.querySelectorAll('.stat-value').forEach(stat => {
-      const text = stat.textContent.trim();
-      
-      // Extract number from text like "336×", "$2.1M", "<4h"
-      const match = text.match(/([\d.]+)/);
-      if (!match) return;
-
-      const value = parseFloat(match[1]);
-      const prefix = text.substring(0, match.index);
-      const suffix = text.substring(match.index + match[1].length);
-
-      gsap.fromTo(stat,
-        { textContent: 0 },
-        {
-          textContent: value,
-          duration: 2.5,
-          ease: 'power1.out',
-          snap: { textContent: value < 10 ? 0.1 : 1 },
-          scrollTrigger: {
-            trigger: stat,
-            start: 'top 80%'
-          },
-          onUpdate: function() {
-            const current = gsap.getProperty(stat, 'textContent');
-            stat.textContent = prefix + (value < 10 ? current.toFixed(1) : Math.round(current)) + suffix;
-          }
-        }
-      );
-    });
-
-    console.log('✅ Homepage stats');
-  }
-
-  initStudioPage() {
-    // Studio-specific animations can go here
-  }
-
-  initStoryPage() {
-    // Story chapter pinning can be added here if needed
-  }
-
-  initProjectPage() {
-    // Project-specific animations
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     RESIZE HANDLING (Throttled)
-     ═══════════════════════════════════════════════════════════ */
-  handleResize() {
-    let ticking = false;
-
-    window.addEventListener('resize', () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          ScrollTrigger.refresh();
-          ticking = false;
-        });
-        ticking = true;
+  /* ============================================================
+     10.  RESIZE
+     ============================================================ */
+  handleResize () {
+    let ticking=false;
+    window.addEventListener('resize',()=>{
+      if(!ticking){
+        requestAnimationFrame(()=>{ScrollTrigger.refresh(); ticking=false;});
+        ticking=true;
       }
-    }, { passive: true });
+    },{passive:true});
   }
 
-  /* ════════════════════════════════════════════════════════════
-     UTILITIES
-     ═══════════════════════════════════════════════════════════ */
-  refresh() {
-    ScrollTrigger.refresh();
-  }
-
-  destroy() {
-    ScrollTrigger.getAll().forEach(st => st.kill());
-    gsap.globalTimeline.clear();
-    if (this.lenis) this.lenis.destroy();
+  /* helpers */
+  refresh(){ScrollTrigger.refresh();}
+  destroy(){
+    ScrollTrigger.getAll().forEach(st=>st.kill());
+    gsap.globalTimeline.clear(); this.lenis&&this.lenis.destroy();
   }
 }
 
-/* ═════════════════════════════════════════════════════════════
-   INITIALIZE
-   ═════════════════════════════════════════════════════════════ */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.m0narqAnimations = new M0NARQ_Animations();
-  });
-} else {
-  window.m0narqAnimations = new M0NARQ_Animations();
-}
+/* ============================================================
+   INITIALISE
+   ============================================================ */
+if (document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',()=>new M0NARQ_Animations());
+}else{ new M0NARQ_Animations(); }
