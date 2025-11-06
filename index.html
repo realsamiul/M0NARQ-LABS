@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="M0NARQ AI - When minutes decide outcomes, physics meets pixels. Real-time AI systems for emerging markets.">
 
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="prefetch" href="studio.html">
+    <link rel="prefetch" href="story.html">
+    <link rel="prefetch" href="contact.html">
+
     <!-- Loader styles -->
     <style>
         .loader {
@@ -136,7 +143,12 @@
                   </p>
                   <img src="/assets/img/hero-landscape.jpg"
                        alt="Satellite view of floodplain at sunrise"
-                       data-parallax />
+                       fetchpriority="high"
+                       width="1920"
+                       height="1080"
+                       data-parallax
+                       data-speed="0.4"
+                       data-bloom />
                 </section>
 
                 <!-- ── PROBLEM WE SOLVE ────────────────────────────────── -->
@@ -258,9 +270,9 @@
                 <section id="logos" data-nav-section data-nav-title="Proof">
                   <h2>Used by Teams Inside</h2>
                   <ul class="logo-bar">
-                    <li><img src="/assets/img/logos/dghs.svg" alt="Bangladesh DGHS"></li>
-                    <li><img src="/assets/img/logos/brac.svg" alt="BRAC"></li>
-                    <li><img src="/assets/img/logos/kuehne.svg" alt="Kuehne + Nagel"></li>
+                    <li><img src="/assets/img/logos/dghs.svg" alt="Bangladesh DGHS" decoding="async"></li>
+                    <li><img src="/assets/img/logos/brac.svg" alt="BRAC" decoding="async"></li>
+                    <li><img src="/assets/img/logos/kuehne.svg" alt="Kuehne + Nagel" decoding="async"></li>
                   </ul>
                 </section>
 

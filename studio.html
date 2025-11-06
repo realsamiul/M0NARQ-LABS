@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="The Stack: Foundation models. Federated training. Edge inference. Physics-informed neural nets for emerging markets.">
 
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="prefetch" href="index.html">
+    <link rel="prefetch" href="story.html">
+    <link rel="prefetch" href="contact.html">
+
     <style>
         .loader {
             position: fixed !important;
@@ -134,7 +141,8 @@
                                  loading="eager"
                                  fetchpriority="high"
                                  width="1920"
-                                 height="900">
+                                 height="900"
+                                 data-bloom>
                         </div>
                     </div>
 
@@ -203,7 +211,8 @@
                                          loading="lazy"
                                          fetchpriority="low"
                                          width="400"
-                                         height="500">
+                                         height="500"
+                                         decoding="async">
                                 </div>
                                 <div class="capability-content">
                                     <h3 class="capability-title">Foundation Models</h3>
@@ -220,7 +229,8 @@
                                          loading="lazy"
                                          fetchpriority="low"
                                          width="400"
-                                         height="500">
+                                         height="500"
+                                         decoding="async">
                                 </div>
                                 <div class="capability-content">
                                     <h3 class="capability-title">Federated Training</h3>
@@ -237,7 +247,8 @@
                                          loading="lazy"
                                          fetchpriority="low"
                                          width="400"
-                                         height="500">
+                                         height="500"
+                                         decoding="async">
                                 </div>
                                 <div class="capability-content">
                                     <h3 class="capability-title">Edge Inference</h3>

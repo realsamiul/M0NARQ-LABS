@@ -25,9 +25,14 @@ this.initLenis();        // ← SMOOTHNESS PRIORITY
 this.initMenu();
 this.initVideos();       // ← PASSIVE ONLY
 this.initHoverEffects();
+this.initDynamicIsland(); // ← INITIALIZE DYNAMIC ISLAND IMMEDIATELY
 
-// Heavy animations after idle
-requestIdleCallback(() => {
+// Heavy animations after idle (with fallback)
+const idleCallback = window.requestIdleCallback || function(cb) {
+  return setTimeout(cb, 1);
+};
+
+idleCallback(() => {
   this.animatePageEntry();
   this.initScrollAnimations();
   this.initHeaderBlend();
@@ -56,6 +61,8 @@ GSAP - GPU EVERYTHING
 initGSAP() {
 gsap.registerPlugin(ScrollTrigger, CustomEase);
 
+// ✅ CRITICAL: Lag smoothing to avoid stutters after tab switching
+gsap.ticker.lagSmoothing(1000, 16);
 
 // Custom easing curves (Exo Ape style)
 CustomEase.create("customGentle", "M0,0 C0,0.202 0.204,1 1,1");
@@ -337,8 +344,8 @@ PAGE ENTRY ANIMATIONS
 ═══════════════════════════════════════════════════════════ */
 animatePageEntry() {
 const titleLines = gsap.utils.toArray('.hero-title .title-line, .project-title-main .title-line');
-const heroMedia = document.querySelector('.hero-section .image-wrapper img, .page-hero .image-wrapper img, .project-hero .hero-video');
-const heroMeta = gsap.utils.toArray('.hero-subtitle, .project-subtitle');
+const heroMedia = document.querySelector('.hero-section .image-wrapper img, .page-hero .image-wrapper img, .project-hero .hero-video, .full-bleed img');
+const heroMeta = gsap.utils.toArray('.hero-subtitle, .project-subtitle, .full-bleed h1, .full-bleed .sub');
 
 
 const tl = gsap.timeline({ defaults: { ease: "customGentle" } });
