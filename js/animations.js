@@ -240,7 +240,7 @@ videos.forEach(video => {
     (entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // Just ensure loaded, don"t manipulate playback
+          // Just ensure loaded, don't manipulate playback
           if (video.readyState < 2) {
             video.load();
           }
@@ -280,7 +280,7 @@ document.querySelectorAll(".project-card").forEach(card => {
       const playPromise = vid.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // Browser blocked autoplay - that"s fine
+          // Browser blocked autoplay - that's fine
         });
       }
     }
